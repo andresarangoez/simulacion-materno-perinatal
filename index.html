@@ -385,6 +385,20 @@ body.on-ini .ini-bg{opacity:.22}
 .c-keys .op{background:#EAF1FB;color:var(--cy)}
 .c-keys .eq{background:var(--ink);color:#FFFFFF;border-color:var(--ink)}
 
+
+.c-tabs{display:flex;gap:4px;flex:none;background:#F4F8FD;border-radius:10px;padding:3px}
+.c-tabs button{white-space:nowrap;flex:none;border:0;background:transparent;border-radius:8px;padding:6px 10px;font-family:var(--m);font-weight:700;font-size:13px;color:var(--mut)}
+.c-tabs button[aria-pressed="true"]{background:#FFFFFF;color:var(--ink);box-shadow:0 1px 3px rgba(13,44,102,.12)}
+.c-ob{display:flex;flex-direction:column;gap:6px}
+.c-l{font-family:var(--m);font-weight:800;font-size:11px;letter-spacing:.1em;color:var(--cy);text-transform:uppercase}
+.c-row{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:6px}
+.c-row input{width:100%;border:1px solid var(--line2);border-radius:8px;padding:8px;font:inherit;font-weight:700;color:var(--ink);text-align:center;min-width:0}
+.c-go{border:0;background:var(--ink);color:#FFFFFF;border-radius:10px;padding:10px;font-family:var(--m);font-weight:800;margin-top:4px}
+.c-res{background:#F4F8FD;border-radius:10px;padding:10px;font-size:13px;color:var(--ink);line-height:1.45;display:flex;flex-direction:column;gap:6px}
+.c-res strong{color:var(--cy);font-size:14px}
+.c-err{color:var(--red);font-weight:700}
+.calc{width:300px}
+
 .grp-l{font-family:var(--m);font-weight:800;font-size:12px;letter-spacing:.14em;color:var(--cy);text-transform:uppercase}
 </style>
 </head>
@@ -431,7 +445,14 @@ body.on-ini .ini-bg{opacity:.22}
   </section>
 </main>
 
-<div class="calc" id="calc" hidden><div class="c-top"><b>Calculadora</b><button type="button" id="cClose" aria-label="Cerrar">✕</button></div><div class="c-disp" id="cDisp">0</div><div class="c-keys" id="cKeys"></div></div>
+<div class="calc" id="calc" hidden><div class="c-top"><div class="c-tabs"><button type="button" data-ct="b" aria-pressed="true">Básica</button><button type="button" data-ct="o" aria-pressed="false">Obstétrica</button></div><button type="button" id="cClose" aria-label="Cerrar">✕</button></div>
+<div data-cp="b"><div class="c-disp" id="cDisp">0</div><div class="c-keys" id="cKeys"></div></div>
+<div data-cp="o" hidden class="c-ob">
+<span class="c-l">FUM (día / mes / año)</span><div class="c-row"><input type="number" id="fD" min="1" max="31" placeholder="Día"><input type="number" id="fM" min="1" max="12" placeholder="Mes"><input type="number" id="fY" min="2020" max="2030" placeholder="Año"></div>
+<span class="c-l">Fecha de hoy</span><div class="c-row"><input type="number" id="hD" value="10"><input type="number" id="hM" value="11"><input type="number" id="hY" value="2026"></div>
+<button type="button" class="c-go" id="obGo">Calcular</button>
+<div class="c-res" id="obRes"><p><b>Edad gestacional</b> = días desde la FUM ÷ 7</p><p><b>FPP (regla de Naegele)</b> = FUM + 7 días − 3 meses + 1 año</p></div>
+</div></div>
 <div class="lb" id="lb" hidden><img alt=""><span>Toque para cerrar</span></div>
 <div class="unlock" id="unlock"><div>FASE SUPERADA</div></div>
 
@@ -511,7 +532,7 @@ function Live(el){
 const HOY='martes 10 de noviembre de 2026';
 const S1PH=(d)=>[
  {n:'Ingreso',cap:'Datos de ingreso',vis:`<div class="gal gv"><div class="card-pt"><b>${d.nombre}</b><span>Hoy: ${HOY}</span><span>FUM: ${d.fum}</span><span>${d.extra}</span></div><img src="img/simu2.jpg" alt="Simulador de parto" style="object-fit:cover"></div>`,
-  q:`Anamnesis: ${d.anam} Armen la fórmula obstétrica y calculen la edad gestacional y la FPP. Pueden usar la calculadora de arriba.`,
+  q:`Anamnesis: ${d.anam} Armen la fórmula obstétrica y calculen la edad gestacional y la FPP por FUM. Pueden usar la calculadora obstétrica de arriba.`,
   data:[['FUM',d.fum],['Fecha de hoy',HOY],['Ciclos','Regulares']],
   type:'ingreso',ans:d.fo,eg:d.eg,fpp:d.fpp},
  {n:'Trabajo de parto',cap:'Monitor materno-fetal',live:{fcf:true},stages:d.stages,
@@ -733,6 +754,25 @@ function calcEval(src){ let i=0; const peek=()=>src[i], eat=c=>{ if(src[i]===c){
   $('#calcBtn').addEventListener('click',()=>{ pad.hidden=!pad.hidden; });
   $('#cClose').addEventListener('click',()=>pad.hidden=true);
   show();
+})();
+
+
+(function(){
+  $$('[data-ct]').forEach(b=>b.addEventListener('click',()=>{ $$('[data-ct]').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); $$('[data-cp]').forEach(p=>p.hidden=p.dataset.cp!==b.dataset.ct); }));
+  const MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const fdate=d=>d.getUTCDate()+' de '+MES[d.getUTCMonth()]+' de '+d.getUTCFullYear();
+  $('#obGo').addEventListener('click',()=>{
+    const v=id=>parseInt($('#'+id).value,10); const fd=v('fD'),fm=v('fM'),fy=v('fY'),hd=v('hD'),hm=v('hM'),hy=v('hY');
+    const out=$('#obRes');
+    if([fd,fm,fy,hd,hm,hy].some(x=>!x)){ out.innerHTML='<p class="c-err">Completen la FUM y la fecha de hoy.</p>'; return; }
+    const F=Date.UTC(fy,fm-1,fd), H=Date.UTC(hy,hm-1,hd); const dias=Math.round((H-F)/864e5);
+    if(dias<0){ out.innerHTML='<p class="c-err">La FUM no puede ser posterior a hoy.</p>'; return; }
+    const sem=Math.floor(dias/7), d=dias%7;
+    const p1=new Date(F+7*864e5); let m=p1.getUTCMonth()-3, y=p1.getUTCFullYear()+1; if(m<0){ m+=12; y-=1; }
+    const last=new Date(Date.UTC(y,m+1,0)).getUTCDate(); const fpp=new Date(Date.UTC(y,m,Math.min(p1.getUTCDate(),last)));
+    out.innerHTML=`<p><b>Edad gestacional</b><br>${dias} días ÷ 7 = <strong>${sem} semanas + ${d} ${d===1?'día':'días'}</strong></p><p><b>FPP (Naegele)</b><br>${fdate(new Date(F))} + 7 días = ${fdate(p1)}<br>− 3 meses + 1 año = <strong>${fdate(fpp)}</strong></p>`;
+    tone(880,.12,'triangle',.12);
+  });
 })();
 
 /* Texto del caso */
