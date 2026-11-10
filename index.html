@@ -644,9 +644,9 @@ const S2PH=(d)=>[
   data:[['Cristaloides','Bolo completo'],['Sangre','Primera unidad pasando']],
   type:'meds',meds:d.vaso},
  {n:'Paso a salas',cap:'Paso a cirugía',vis:`<div class="gal gh"><img src="img/mesa.jpg" alt="Paciente en la mesa quirúrgica" style="object-fit:cover"><img src="img/ectopico.jpg" alt="Localizaciones del embarazo ectópico"></div>`,
-  q:`El ectópico está roto en la porción ampular de la trompa derecha. ¿Cuál es la conducta para ${d.nombre.split(',')[0]}?`,
-  data:[['Localización','Ampular, trompa derecha (cerca del 80 % de los ectópicos)'],['Estado','Con norepinefrina y sangre en curso']],
-  type:'opts',opts:[['Salpingectomía urgente en salas de cirugía con soporte y sangre en curso',1],['Metotrexato intramuscular y observación en hospitalización por 24 horas',0],['Esperar en urgencias a que la β-hCG baje antes de decidir la cirugía',0],['Trasladar a la unidad de cuidado intensivo y operar al día siguiente',0]]}
+  q:`El ectópico está roto en la porción ampular de la trompa derecha. ¿Cuál es el manejo para ${d.nombre.split(',')[0]}?`,
+  data:[['Localización','Ampular, trompa derecha (cerca del 80 % de los ectópicos)'],['Hallazgo','Ectópico roto con hemoperitoneo'],['Estado','Inestable, con norepinefrina y sangre en curso']],
+  type:'opts',opts:[['Laparotomía urgente en salas de cirugía con soporte y sangre en curso',1],['Laparoscopia programada cuando la paciente se estabilice',0],['Metotrexato intramuscular y control seriado de β-hCG',0],['Manejo expectante con ecografías de control',0]]}
 ];
 M[2].sits[1]={who:'Sofía · primigestante',tx:'Sofía, 22 años, primigestante.\nFUM: 19 de septiembre de 2026. Hoy: 10 de noviembre de 2026.\nDolor súbito en la fosa ilíaca derecha y mareo.\nObjetivo: tratar el shock y llevarla estable a cirugía.',
  ph:S2PH({nombre:'Sofía, 22 años',fum:'19 de septiembre de 2026',compresas:'3 compresas empapadas en la última hora',anam:'primer embarazo. Amenorrea de 7 semanas. No ha tenido partos, abortos, cesáreas, ectópicos ni mortinatos.',fo:[1,0,0,0,0,0,0],
