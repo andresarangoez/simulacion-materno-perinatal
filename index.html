@@ -639,10 +639,10 @@ const S2PH=(d)=>[
   q:'Llegó la primera unidad. Marquen todo lo que deben hacer para transfundirla con seguridad, y nada más.',
   data:[['Grupo de la paciente',d.grupo],['Unidad',`${d.grupo}, vigente, bolsa íntegra`]],
   type:'multi',items:[['Verificar orden médica y consentimiento para la transfusión',1],['Verificar en la cama, entre dos profesionales, identidad, grupo y Rh',1],['Revisar la unidad: vencimiento, integridad de la bolsa y aspecto',1],['Usar equipo con filtro y solo solución salina al 0,9 % en la vía',1],['Tomar signos antes de iniciar y vigilar de cerca los primeros 15 minutos',1],['Pasarla junto con dextrosa al 5 % por la misma vía',0],['Calentar la unidad en el microondas antes de conectarla',0],['Agregar medicamentos dentro de la bolsa de sangre',0]]},
- {n:'Descompensación',cap:'Monitor',live:{},stages:[{label:'Ahora',v:d.v2,note:`<b>PAM ${d.pam} mmHg</b> pese a cristaloides y sangre. Peso ${d.peso}. Norepinefrina: 4 mg en 250 ml (16 mcg/ml).`}],
-  q:`La presión no sube. El médico indica soporte vasopresor mientras ${d.nombre.split(',')[0]} pasa a cirugía. Elijan el fármaco y la velocidad de la bomba para 0,1 mcg/kg/min.`,
-  data:[['Peso',d.peso],['Dilución','4 mg en 250 ml = 16 mcg/ml'],['Fórmula','mcg/kg/min × kg × 60 ÷ 16']],
-  type:'pick',groups:[['Fármaco',['Dobutamina (inotrópico)','Norepinefrina (vasopresor)'],'Norepinefrina (vasopresor)'],['Velocidad de la bomba',d.velOpts,d.vel]]},
+ {n:'Descompensación',cap:'Monitor',live:{},stages:[{label:'Ahora',v:d.v2,note:`<b>PAM ${d.pam} mmHg</b> pese a cristaloides y sangre. Sigue pálida, fría y confusa.`}],
+  q:`La presión no sube pese a los líquidos y la sangre. ¿Qué medicamento inician para estabilizar a ${d.nombre.split(',')[0]} mientras pasa a cirugía?`,
+  data:[['Cristaloides','Bolo completo'],['Sangre','Primera unidad pasando']],
+  type:'meds',meds:d.vaso},
  {n:'Paso a salas',cap:'Paso a cirugía',vis:`<div class="gal gh"><img src="img/mesa.jpg" alt="Paciente en la mesa quirúrgica" style="object-fit:cover"><img src="img/ectopico.jpg" alt="Localizaciones del embarazo ectópico"></div>`,
   q:`El ectópico está roto en la porción ampular de la trompa derecha. ¿Cuál es la conducta para ${d.nombre.split(',')[0]}?`,
   data:[['Localización','Ampular, trompa derecha (cerca del 80 % de los ectópicos)'],['Estado','Con norepinefrina y sangre en curso']],
@@ -655,7 +655,7 @@ M[2].sits[1]={who:'Sofía · primigestante',tx:'Sofía, 22 años, primigestante.
   labsShort:'Hemoglobina 8,2 g/dl (ref. 12–16) · Hematocrito 25 % (ref. 36–46).',
   diuresis:'10 ml/h',pp:'28 mmHg, disminuida',mental:'Ansiosa y confusa',grado:3,peso:'60 kg',grupo:'O positivo',
   v1:{hr:122,sys:86,dia:54,rr:30,spo2:95,temp:36.1},v2:{hr:134,sys:74,dia:40,rr:32,spo2:94,temp:36.0},pam:51,
-  velOpts:['11,3 ml/h','22,5 ml/h','45 ml/h'],vel:'22,5 ml/h'})};
+  vaso:[['Dobutamina','','#7A5AF8',0],['Norepinefrina','','#E8457A',1],['Furosemida','','#1C9FD6',0],['Labetalol','','#16A37F',0]]})};
 M[2].sits[2]={who:'Daniela · multípara',tx:'Daniela, 34 años, multípara.\nFUM: 15 de septiembre de 2026. Hoy: 10 de noviembre de 2026.\nDolor súbito en la fosa ilíaca derecha, irradiado al hombro, y desmayo.\nObjetivo: tratar el shock y llevarla estable a cirugía.',
  ph:S2PH({nombre:'Daniela, 34 años',fum:'15 de septiembre de 2026',compresas:'4 compresas empapadas en la última hora',anam:'quinto embarazo, amenorrea de 8 semanas. Tuvo un parto vaginal hace 12 años (hijo vivo), una cesárea hace 6 años (hijo vivo), un aborto espontáneo a las 9 semanas hace 4 años y un ectópico en la trompa izquierda hace 2 años, tratado con salpingectomía izquierda. No ha tenido mortinatos.',fo:[5,1,1,1,1,0,2],
   v0:{hr:146,sys:68,dia:40,rr:38,spo2:86,temp:35.6},n0:'<b>Confusa y letárgica.</b> Muy pálida, fría, sudorosa. Llenado capilar mayor de 4 segundos.',
@@ -663,7 +663,7 @@ M[2].sits[2]={who:'Daniela · multípara',tx:'Daniela, 34 años, multípara.\nFU
   labsShort:'Hemoglobina 6,4 g/dl (ref. 12–16) · Hematocrito 19 % (ref. 36–46).',
   diuresis:'Mínima, menos de 5 ml/h',pp:'28 mmHg, disminuida',mental:'Confusa y letárgica',grado:4,peso:'70 kg',grupo:'A positivo',
   v1:{hr:138,sys:72,dia:42,rr:34,spo2:92,temp:35.8},v2:{hr:142,sys:70,dia:38,rr:34,spo2:93,temp:35.8},pam:49,
-  velOpts:['13,1 ml/h','26,3 ml/h','52,5 ml/h'],vel:'26,3 ml/h'})};
+  vaso:[['Furosemida','','#1C9FD6',0],['Labetalol','','#16A37F',0],['Norepinefrina','','#E8457A',1],['Dobutamina','','#7A5AF8',0]]})};
 
 /* ===== Construcción ===== */
 const deck=$('#deck');
@@ -673,7 +673,7 @@ function phaseHTML(p,i,s,t,id){
   let task='';
   if(p.type==='formula') task=foHTML()+`<div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
   if(p.type==='ingreso') task=foHTML()+`<span class="grp-l">Edad gestacional</span><div class="pick" data-g="eg">${p.eg.map(o=>`<button type="button" aria-pressed="false">${o[0]}</button>`).join('')}</div><span class="grp-l">FPP</span><div class="pick" data-g="fpp">${p.fpp.map(o=>`<button type="button" aria-pressed="false">${o[0]}</button>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
-  if(p.type==='meds') task=`<div class="meds">${p.meds.map((m,k)=>`<button type="button" data-md="${k}" style="--mc:${m[2]}"><span class="amp-ic"><i></i></span><b>${m[0]}</b><small>${m[1]}</small></button>`).join('')}</div>`;
+  if(p.type==='meds') task=`<div class="meds">${p.meds.map((m,k)=>`<button type="button" data-md="${k}" style="--mc:${m[2]}"><span class="amp-ic"><i></i></span><b>${m[0]}</b>${m[1]?`<small>${m[1]}</small>`:''}</button>`).join('')}</div>`;
   if(p.type==='opts') task=`<div class="opts">${p.opts.map((o,k)=>`<button type="button" data-o="${k}">${o[0]}</button>`).join('')}</div>`;
   if(p.type==='num') task=`<div class="pick nums">${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<button type="button" aria-pressed="false" data-n="${n}">${n}</button>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
   if(p.type==='range') task=`<div class="range"><div class="big" data-rv>00:00</div><input type="range" min="0" max="300" step="15" value="0" aria-label="Minutos desde el nacimiento" data-r><div class="row"><button class="btn" type="button" data-try>Pinzar aquí</button><span class="hint">0 a 5 minutos desde el nacimiento</span></div></div>`;
@@ -713,7 +713,7 @@ function wireAll(){
     $$('.pick',sec).forEach(g=>$$('button',g).forEach(b=>b.addEventListener('click',()=>$$('button',g).forEach(x=>x.setAttribute('aria-pressed',String(x===b))))));
     if(p.type==='formula') $('[data-try]',sec).addEventListener('click',()=>{ const e=foCheck(); e?fail(e):win(); });
     if(p.type==='ingreso') $('[data-try]',sec).addEventListener('click',()=>{ const e=foCheck(); const eg=$('[data-g="eg"] [aria-pressed="true"]',sec), fp=$('[data-g="fpp"] [aria-pressed="true"]',sec); const errs=[]; if(e) errs.push(e); if(!eg||!p.eg.find(o=>o[0]===eg.textContent&&o[1])) errs.push('Revisen la edad gestacional.'); if(!fp||!p.fpp.find(o=>o[0]===fp.textContent&&o[1])) errs.push('Revisen la FPP.'); errs.length?fail(errs.join(' ')):win(); });
-    if(p.type==='meds') $$('[data-md]',sec).forEach(b=>b.addEventListener('click',()=>{ const m=p.meds[+b.dataset.md]; if(m[3]){ b.classList.add('ok'); win(); } else { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); fail(m[0]+' no es el medicamento para el manejo activo. Vuelvan a intentar.'); } }));
+    if(p.type==='meds') $$('[data-md]',sec).forEach(b=>b.addEventListener('click',()=>{ const m=p.meds[+b.dataset.md]; if(m[3]){ b.classList.add('ok'); win(); } else { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); fail(m[0]+' no es el medicamento indicado aquí. Vuelvan a intentar.'); } }));
     if(p.type==='opts') $$('[data-o]',sec).forEach(b=>b.addEventListener('click',()=>{ if(p.opts[+b.dataset.o][1]){ b.classList.add('ok'); win(); } else { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); fail('No. Discútanlo y vuelvan a intentar.'); } }));
     if(p.type==='num') $('[data-try]',sec).addEventListener('click',()=>{ const b=$('.nums [aria-pressed="true"]',sec); if(!b) return fail('Elijan un puntaje.'); +b.dataset.n===p.ans?win():fail('No es ese puntaje. Revisen cada signo.'); });
     if(p.type==='range'){ const r=$('[data-r]',sec), v=$('[data-rv]',sec); const show=()=>{ const x=+r.value; v.textContent=String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0'); }; r.addEventListener('input',show); show(); $('[data-try]',sec).addEventListener('click',()=>{ const x=+r.value; (x>=p.min&&x<=p.max)?win():fail(x<p.min?'Muy pronto.':'Demasiado tarde para lo recomendado.'); }); }
