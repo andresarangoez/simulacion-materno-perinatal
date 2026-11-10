@@ -403,6 +403,19 @@ body.on-ini .ini-bg{opacity:.22}
 .lm-w .sc{position:absolute;right:6px;font-style:normal;font-family:var(--m);font-weight:700;font-size:10px;color:#6E86AE;z-index:1}
 .ctg .lm-waves{grid-template-rows:1.3fr 1fr}
 
+
+.meds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.meds button{border:1.5px solid var(--line2);background:#FFFFFF;border-radius:14px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;color:var(--ink);transition:border-color .3s,background .3s,transform .2s}
+.meds button:hover{transform:translateY(-2px);border-color:var(--cy)}
+.meds b{font-size:13px;line-height:1.15;overflow-wrap:anywhere;hyphens:auto}
+.meds small{font-size:12px;color:var(--mut);font-weight:600;line-height:1.2}
+.amp-ic{position:relative;width:30px;height:96px}
+.amp-ic::before{content:"";position:absolute;left:9px;top:0;width:12px;height:22px;border-radius:6px 6px 3px 3px;background:#EDF2F8;border:1.5px solid #B9C6D8}
+.amp-ic::after{content:"";position:absolute;left:3px;top:24px;width:24px;height:70px;border-radius:6px 6px 10px 10px;background:linear-gradient(90deg,#F7FAFE,#FFFFFF 40%,#E6EDF6);border:1.5px solid #B9C6D8}
+.amp-ic i{position:absolute;left:4px;top:46px;width:22px;height:28px;background:var(--mc);z-index:1;border-radius:2px}
+.meds button.ok{border-color:var(--cy);background:#EAF1FB}
+.meds button.no{border-color:var(--red);background:#FBE6E6;animation:shake .4s}
+
 .grp-l{font-family:var(--m);font-weight:800;font-size:12px;letter-spacing:.14em;color:var(--cy);text-transform:uppercase}
 </style>
 </head>
@@ -559,8 +572,8 @@ const S1PH=(d)=>[
  {n:'Pinzamiento',cap:'Cordón umbilical',vis:`<div class="gal g3"><img src="img/pinz2.jpg" alt="Pinzamiento del cordón" style="object-fit:cover"><img src="img/pinzamiento.jpg" alt="Pinzas en el cordón" style="object-fit:cover"><img src="img/kit.jpg" alt="Kit con pinzas de cordón"></div>`,
   q:'Muevan el reloj hasta el momento en que pinzarían el cordón.',
   data:[['Bebé',d.rnPinz],['Cordón','Late']],type:'range',min:60,max:180},
- {n:'Alumbramiento',cap:'Placenta y oxitocina',vis:`<div class="oxi"><img src="img/placenta.jpg" alt="Placenta"><img src="img/oxitocina.jpg" alt="Ampolla de oxitocina 10 UI" class="amp"></div>`,
-  q:d.alumQ,data:d.alumData,type:'opts',opts:d.alumOpts},
+ {n:'Alumbramiento',cap:'Placenta',vis:`<img src="img/placenta.jpg" alt="Placenta y cordón umbilical" style="object-fit:cover">`,
+  q:'Nació el bebé. ¿Qué medicamento usan para el manejo activo del alumbramiento?',data:d.alumData,type:'meds',meds:d.meds},
  {n:'Posparto',cap:'Vigilancia del posparto',vis:`<img src="img/posparto.jpg" alt="Toma de presión en el posparto" style="object-fit:cover">`,
   q:'Placenta completa. ¿Qué hace el equipo en la primera hora del posparto?',
   data:[['PA','112/70'],['FC','88 lpm'],['Útero','Firme, bajo el ombligo'],['Sangrado','Moderado']],
@@ -576,8 +589,8 @@ const M={
     stages:STG([['Minuto 1',88,118,76,18,98,36.8,140,3,'Dilatación 5 cm · borramiento 80 % · estación −2 · 3 contracciones en 10 min de 40 s'],['Minuto 2',92,120,78,20,98,36.8,142,4,'Dilatación 6 cm · borramiento 90 % · estación −1 · 4 contracciones en 10 min de 45 s'],['Minuto 3',96,122,78,20,98,36.9,138,4,'Dilatación 8 cm · borramiento 100 % · estación 0 · rompe membranas, líquido claro'],['Minuto 4',100,124,80,22,98,36.9,132,5,'Dilatación 10 cm · estación +2 · 5 contracciones en 10 min de 60 s · deseo de pujar']]),
     tpOpts:[['Esperar dos horas más en la sala antes de valorar otra vez el cuello',0],['Preparar el expulsivo: dilatación completa, estación +2 y FCF tranquilizadora',1],['Iniciar oxitocina para acelerar la dilatación que todavía está incompleta',0],['Pedir que puje con fuerza desde ahora aunque falte borrar el cuello',0]],
     fcfExp:'128 lpm',apgar:8,apgarData:[['Frecuencia cardíaca','140 lpm'],['Respiración','Llanto vigoroso'],['Tono','Alguna flexión'],['Irritabilidad','Llora al estímulo'],['Color','Manos y pies azulados']],rnPinz:'Vigoroso, piel con piel',
-    alumQ:'Nació el bebé y Valentina no tiene vía venosa. Según la Resolución 3280, ¿qué uterotónico, dosis y vía usan para el manejo activo?',alumData:[['Vía venosa','No tiene'],['Hora del nacimiento','02:41']],
-    alumOpts:[['Oxitocina 10 UI por vía intramuscular después del nacimiento',1],['Oxitocina 20 UI en bolo intravenoso rápido por una vena nueva',0],['Metilergometrina 0,2 mg intramuscular como primera elección',0],['Esperar la placenta sin uterotónico y aplicar solo si sangra',0]]})},
+    alumData:[['Vía venosa','No tiene'],['Hora del nacimiento','02:41']],
+    meds:[['Oxitocina','10 UI · intramuscular','#E8457A',1],['Metilergometrina','0,2 mg · intramuscular','#7A5AF8',0],['Terbutalina','0,25 mg · subcutánea','#1C9FD6',0],['Sulfato de magnesio','4 g · intravenoso','#16A37F',0]]})},
   2:{who:'Camila · multípara',tx:'Camila, 34 años, multípara.\nFUM: 2 de febrero de 2026. Hoy: 10 de noviembre de 2026.\nContracciones desde hace 4 horas, con goteo de lactato de Ringer.\nObjetivo: madre y bebé estables al final de la primera hora.',
    ph:S1PH({nombre:'Camila, 34 años',fum:'2 de febrero de 2026',extra:'Vía venosa con lactato de Ringer',anam:'cuarto embarazo. Tuvo un parto vaginal hace 8 años (hijo vivo), un aborto espontáneo a las 10 semanas hace 5 años y un parto vaginal a las 38 semanas con mortinato hace 3 años. No ha tenido cesáreas ni ectópicos.',fo:[4,2,1,0,0,1,1],
     eg:[['39 + 1 semanas',0],['40 + 1 semanas',1],['41 + 1 semanas',0]],fpp:[['2 de noviembre de 2026',0],['9 de noviembre de 2026',1],['16 de noviembre de 2026',0]],
@@ -585,8 +598,8 @@ const M={
     stages:STG([['Minuto 1',90,116,74,18,98,36.7,138,4,'Dilatación 5 cm · borramiento 90 % · estación −2 · 4 contracciones en 10 min de 45 s'],['Minuto 2',94,118,76,20,98,36.8,140,4,'Dilatación 7 cm · borramiento 100 % · estación −1'],['Minuto 3',98,122,78,22,98,36.8,134,5,'Dilatación 9 cm · estación +1 · 5 contracciones en 10 min de 55 s'],['Minuto 4',102,124,80,22,98,36.9,128,5,'Dilatación 10 cm · estación +3 · deseo de pujar']]),
     tpOpts:[['Esperar dos horas más en la sala antes de valorar otra vez el cuello',0],['Preparar el expulsivo: dilatación completa, estación +3 y FCF tranquilizadora',1],['Aumentar el goteo de líquidos para acelerar la salida de la cabeza',0],['Trasladar a cesárea porque ya tuvo un mortinato en el parto anterior',0]],
     fcfExp:'124 lpm',apgar:6,apgarData:[['Frecuencia cardíaca','110 lpm'],['Respiración','Irregular'],['Tono','Alguna flexión'],['Irritabilidad','Mueca'],['Color','Manos y pies azulados']],rnPinz:'Llora a los 40 segundos tras secado y estímulo',
-    alumQ:'Nació el bebé y Camila tiene vía venosa con lactato de Ringer. Según la Resolución 3280 y la guía colombiana, ¿qué opción es correcta?',alumData:[['Vía venosa','Permeable'],['Hora del nacimiento','03:12']],
-    alumOpts:[['Oxitocina 5 UI intravenosa lenta o 10 UI intramuscular',1],['Oxitocina 20 UI en bolo intravenoso rápido sin diluir',0],['Metilergometrina 0,2 mg intravenosa como primera elección',0],['Retirar la vía y esperar la placenta sin uterotónico',0]]})}}},
+    alumData:[['Vía venosa','Permeable, con lactato de Ringer'],['Hora del nacimiento','03:12']],
+    meds:[['Terbutalina','0,25 mg · subcutánea','#1C9FD6',0],['Oxitocina','10 UI · intravenosa lenta','#E8457A',1],['Sulfato de magnesio','4 g · intravenoso','#16A37F',0],['Metilergometrina','0,2 mg · intramuscular','#7A5AF8',0]]})}}},
  2:{name:'Sala 2 · Shock hipovolémico por ectópico roto',sits:{}}
 };
 const ATLS=`<div class="shk"><table><thead><tr><th>Parámetro</th><th>Grado I</th><th>Grado II</th><th>Grado III</th><th>Grado IV</th></tr></thead><tbody>
@@ -649,6 +662,7 @@ function phaseHTML(p,i,s,t,id){
   let task='';
   if(p.type==='formula') task=foHTML()+`<div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
   if(p.type==='ingreso') task=foHTML()+`<span class="grp-l">Edad gestacional</span><div class="pick" data-g="eg">${p.eg.map(o=>`<button type="button" aria-pressed="false">${o[0]}</button>`).join('')}</div><span class="grp-l">FPP</span><div class="pick" data-g="fpp">${p.fpp.map(o=>`<button type="button" aria-pressed="false">${o[0]}</button>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
+  if(p.type==='meds') task=`<div class="meds">${p.meds.map((m,k)=>`<button type="button" data-md="${k}" style="--mc:${m[2]}"><span class="amp-ic"><i></i></span><b>${m[0]}</b><small>${m[1]}</small></button>`).join('')}</div>`;
   if(p.type==='opts') task=`<div class="opts">${p.opts.map((o,k)=>`<button type="button" data-o="${k}">${o[0]}</button>`).join('')}</div>`;
   if(p.type==='num') task=`<div class="pick nums">${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<button type="button" aria-pressed="false" data-n="${n}">${n}</button>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
   if(p.type==='range') task=`<div class="range"><div class="big" data-rv>00:00</div><input type="range" min="0" max="300" step="15" value="0" aria-label="Minutos desde el nacimiento" data-r><div class="row"><button class="btn" type="button" data-try>Pinzar aquí</button><span class="hint">0 a 5 minutos desde el nacimiento</span></div></div>`;
@@ -671,7 +685,7 @@ for(const s of [1,2]) for(const t of [1,2]){
   c.ph.forEach((p,i)=>{ const id=`p${s}${t}-${i}`; deck.insertAdjacentHTML('beforeend',`<section class="slide phase" id="${id}" data-k="${key}" data-p="${i}" aria-label="Fase ${i+1}">${phaseHTML(p,i,s,t,id)}</section>`); });
   deck.insertAdjacentHTML('beforeend',`<section class="slide" id="e${s}${t}" data-k="${key}" aria-label="Atención completa"><div class="in"><h2><span class="glow">Atención completa</span></h2><div class="two"><div class="panel"><span class="tag">Tabla de tiempos</span><div class="board" data-board style="margin-top:14px"></div><div class="row" style="margin-top:14px"><button class="btn sm" type="button" data-home>Volver al inicio</button></div></div><div class="panel"><span class="tag mag">Antes de salir de la sala</span><div class="deb" data-deb style="margin-top:14px;grid-template-columns:repeat(2,minmax(0,1fr))"></div></div></div></div></section>`);
 }
-deck.insertAdjacentHTML('beforeend',`<section class="slide" id="s-refs" aria-label="Referencias"><div class="in"><h2 class="r" style="--i:0">Referencias</h2><ol class="refs r" style="--i:1"><li>Organización Mundial de la Salud. Recomendaciones de la OMS: cuidados durante el parto para una experiencia de parto positiva. Ginebra: OMS; 2018.</li><li>Cunningham FG, Leveno KJ, Dashe JS, Hoffman BL, Spong CY, Casey BM. Trabajo de parto normal. En: Williams Obstetricia. 26.ª ed. México: Editorial Médica Panamericana; 2022. p. 409-33.</li><li>American Academy of Pediatrics Committee on Fetus and Newborn, American College of Obstetricians and Gynecologists Committee on Obstetric Practice. The Apgar score. Pediatrics. 2015;136(4):819-22.</li><li>Weiner GM, editor. Textbook of neonatal resuscitation. 8th ed. Itasca (IL): American Academy of Pediatrics; 2021.</li><li>World Health Organization. Guideline: delayed umbilical cord clamping for improved maternal and infant health and nutrition outcomes. Geneva: WHO; 2014.</li><li>Ministerio de Salud y Protección Social, Colciencias. Guía de práctica clínica para la prevención, detección temprana y tratamiento de las complicaciones del embarazo, parto o puerperio. Bogotá: MinSalud; 2013.</li><li>American College of Obstetricians and Gynecologists. ACOG Practice Bulletin No. 193: tubal ectopic pregnancy. Obstet Gynecol. 2018;131(3):e91-103.</li><li>World Health Organization. WHO guidelines for safe surgery 2009: safe surgery saves lives. Geneva: WHO; 2009.</li><li>American College of Surgeons Committee on Trauma. ATLS: Advanced Trauma Life Support. Student course manual. 10th ed. Chicago: ACS; 2018.</li><li>Ministerio de Salud y Protección Social. Resolución 3280 de 2018: lineamientos técnicos y operativos de la Ruta Integral de Atención en Salud Materno Perinatal. Bogotá: MinSalud; 2018.</li><li>Gould CV, Umscheid CA, Agarwal RK, Kuntz G, Pegues DA; Healthcare Infection Control Practices Advisory Committee. Guideline for prevention of catheter-associated urinary tract infections 2009. Atlanta: CDC; 2009.</li></ol></div></section>`);
+deck.insertAdjacentHTML('beforeend',`<section class="slide" id="s-refs" aria-label="Referencias"><div class="in"><h2 class="r" style="--i:0">Referencias</h2><ol class="refs r" style="--i:1"><li>Organización Mundial de la Salud. Recomendaciones de la OMS: cuidados durante el parto para una experiencia de parto positiva. Ginebra: OMS; 2018.</li><li>Cunningham FG, Leveno KJ, Dashe JS, Hoffman BL, Spong CY, Casey BM. Trabajo de parto normal. En: Williams Obstetricia. 26.ª ed. México: Editorial Médica Panamericana; 2022. p. 409-33.</li><li>American Academy of Pediatrics Committee on Fetus and Newborn, American College of Obstetricians and Gynecologists Committee on Obstetric Practice. The Apgar score. Pediatrics. 2015;136(4):819-22.</li><li>Weiner GM, editor. Textbook of neonatal resuscitation. 8th ed. Itasca (IL): American Academy of Pediatrics; 2021.</li><li>World Health Organization. Guideline: delayed umbilical cord clamping for improved maternal and infant health and nutrition outcomes. Geneva: WHO; 2014.</li><li>Ministerio de Salud y Protección Social, Colciencias. Guía de práctica clínica para la prevención, detección temprana y tratamiento de las complicaciones del embarazo, parto o puerperio. Bogotá: MinSalud; 2013.</li><li>American College of Obstetricians and Gynecologists. ACOG Practice Bulletin No. 193: tubal ectopic pregnancy. Obstet Gynecol. 2018;131(3):e91-103.</li><li>World Health Organization. WHO guidelines for safe surgery 2009: safe surgery saves lives. Geneva: WHO; 2009.</li><li>American College of Surgeons Committee on Trauma. ATLS: Advanced Trauma Life Support. Student course manual. 10th ed. Chicago: ACS; 2018.</li><li>Gould CV, Umscheid CA, Agarwal RK, Kuntz G, Pegues DA; Healthcare Infection Control Practices Advisory Committee. Guideline for prevention of catheter-associated urinary tract infections 2009. Atlanta: CDC; 2009.</li></ol></div></section>`);
 
 /* ===== Lógica ===== */
 const lives={};
@@ -688,6 +702,7 @@ function wireAll(){
     $$('.pick',sec).forEach(g=>$$('button',g).forEach(b=>b.addEventListener('click',()=>$$('button',g).forEach(x=>x.setAttribute('aria-pressed',String(x===b))))));
     if(p.type==='formula') $('[data-try]',sec).addEventListener('click',()=>{ const e=foCheck(); e?fail(e):win(); });
     if(p.type==='ingreso') $('[data-try]',sec).addEventListener('click',()=>{ const e=foCheck(); const eg=$('[data-g="eg"] [aria-pressed="true"]',sec), fp=$('[data-g="fpp"] [aria-pressed="true"]',sec); const errs=[]; if(e) errs.push(e); if(!eg||!p.eg.find(o=>o[0]===eg.textContent&&o[1])) errs.push('Revisen la edad gestacional.'); if(!fp||!p.fpp.find(o=>o[0]===fp.textContent&&o[1])) errs.push('Revisen la FPP.'); errs.length?fail(errs.join(' ')):win(); });
+    if(p.type==='meds') $$('[data-md]',sec).forEach(b=>b.addEventListener('click',()=>{ const m=p.meds[+b.dataset.md]; if(m[3]){ b.classList.add('ok'); win(); } else { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); fail(m[0]+' no es el medicamento para el manejo activo. Vuelvan a intentar.'); } }));
     if(p.type==='opts') $$('[data-o]',sec).forEach(b=>b.addEventListener('click',()=>{ if(p.opts[+b.dataset.o][1]){ b.classList.add('ok'); win(); } else { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); fail('No. Discútanlo y vuelvan a intentar.'); } }));
     if(p.type==='num') $('[data-try]',sec).addEventListener('click',()=>{ const b=$('.nums [aria-pressed="true"]',sec); if(!b) return fail('Elijan un puntaje.'); +b.dataset.n===p.ans?win():fail('No es ese puntaje. Revisen cada signo.'); });
     if(p.type==='range'){ const r=$('[data-r]',sec), v=$('[data-rv]',sec); const show=()=>{ const x=+r.value; v.textContent=String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0'); }; r.addEventListener('input',show); show(); $('[data-try]',sec).addEventListener('click',()=>{ const x=+r.value; (x>=p.min&&x<=p.max)?win():fail(x<p.min?'Muy pronto.':'Demasiado tarde para lo recomendado.'); }); }
@@ -703,7 +718,7 @@ function resetKey(key){
   done[key].fill(0);
   $$(`.phase[data-k="${key}"]`).forEach(sec=>{
     $$('.data button',sec).forEach(b=>{ b.classList.remove('shown'); b.lastChild.textContent='tocar para ver'; });
-    $$('.opts button',sec).forEach(b=>b.classList.remove('ok','no'));
+    $$('.opts button,.meds button',sec).forEach(b=>b.classList.remove('ok','no'));
     $$('.pick button,.multi button',sec).forEach(b=>b.setAttribute('aria-pressed','false'));
     $$('.fst output',sec).forEach(o=>o.textContent='0');
     const r=$('[data-r]',sec); if(r){ r.value=0; r.dispatchEvent(new Event('input')); }
