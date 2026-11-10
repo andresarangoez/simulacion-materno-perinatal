@@ -416,6 +416,17 @@ body.on-ini .ini-bg{opacity:.22}
 .meds button.ok{border-color:var(--cy);background:#EAF1FB}
 .meds button.no{border-color:var(--red);background:#FBE6E6;animation:shake .4s}
 
+
+.c-date{width:100%;border:1px solid var(--line2);border-radius:10px;padding:9px 10px;font:inherit;font-weight:700;color:var(--ink)}
+.c-big{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.c-big div{background:#0D2C66;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px}
+.c-big span{font-family:var(--m);font-weight:800;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#9FB7DE}
+.c-big b{font-family:var(--h);font-size:17px;color:#FFFFFF;line-height:1.15}
+.c-bar{height:8px;border-radius:999px;background:#EAF1FB;overflow:hidden}
+.c-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3A8CEA,#0D2C66);transition:width .5s var(--ease)}
+.c-tri{display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--mut)}
+.calc{width:330px}
+
 .grp-l{font-family:var(--m);font-weight:800;font-size:12px;letter-spacing:.14em;color:var(--cy);text-transform:uppercase}
 </style>
 </head>
@@ -428,7 +439,7 @@ body.on-ini .ini-bg{opacity:.22}
     <button class="chip hudbtn" id="homeBtn" type="button">INICIO</button>
     <span class="chip" id="where" hidden></span>
     <span class="chip">TIEMPO <span id="clock">00:00</span></span>
-    <button class="chip ghost" id="calcBtn" type="button" title="Calculadora">CALCULADORA</button>
+    <button class="chip ghost" id="calcBtn" type="button" title="Calculadora de embarazo por FUM">CALCULADORA FUM</button>
     <button class="chip ghost" id="sndBtn" type="button" aria-pressed="true" title="Sonido del monitor" style="padding:6px 9px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
     <button class="chip ghost" id="refBtn" type="button">REFERENCIAS</button>
     <button class="chip ghost" id="fs" type="button" aria-label="Pantalla completa" title="Pantalla completa" style="padding:6px 9px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
@@ -462,12 +473,12 @@ body.on-ini .ini-bg{opacity:.22}
   </section>
 </main>
 
-<div class="calc" id="calc" hidden><div class="c-top"><div class="c-tabs"><button type="button" data-ct="b" aria-pressed="true">Básica</button><button type="button" data-ct="o" aria-pressed="false">Obstétrica</button></div><button type="button" id="cClose" aria-label="Cerrar">✕</button></div>
-<div data-cp="b"><div class="c-disp" id="cDisp">0</div><div class="c-keys" id="cKeys"></div></div>
-<div data-cp="o" hidden class="c-ob">
-<span class="c-l">FUM (día / mes / año)</span><div class="c-row"><input type="number" id="fD" min="1" max="31" placeholder="Día"><input type="number" id="fM" min="1" max="12" placeholder="Mes"><input type="number" id="fY" min="2020" max="2030" placeholder="Año"></div>
-<span class="c-l">Fecha de hoy</span><div class="c-row"><input type="number" id="hD" value="10"><input type="number" id="hM" value="11"><input type="number" id="hY" value="2026"></div>
-<button type="button" class="c-go" id="obGo">Calcular</button>
+<div class="calc" id="calc" hidden><div class="c-top"><b>Calculadora de embarazo por FUM</b><button type="button" id="cClose" aria-label="Cerrar">✕</button></div>
+<div class="c-ob">
+<label class="c-l" for="fumIn">Fecha de última menstruación (FUM)</label><input type="date" id="fumIn" class="c-date">
+<label class="c-l" for="hoyIn">Fecha de consulta</label><input type="date" id="hoyIn" class="c-date" value="2026-11-10">
+<div class="c-big"><div><span>Edad gestacional</span><b id="egOut">—</b></div><div><span>Fecha probable de parto</span><b id="fppOut">—</b></div></div>
+<div class="c-bar"><i id="egBar"></i></div><div class="c-tri"><span>1.er trimestre</span><span>2.º trimestre</span><span>3.er trimestre</span></div>
 <div class="c-res" id="obRes"><p><b>Edad gestacional</b> = días desde la FUM ÷ 7</p><p><b>FPP (regla de Naegele)</b> = FUM + 7 días − 3 meses + 1 año</p></div>
 </div></div>
 <div class="lb" id="lb" hidden><img alt=""><span>Toque para cerrar</span></div>
@@ -555,7 +566,7 @@ function Live(el){
 const HOY='martes 10 de noviembre de 2026';
 const S1PH=(d)=>[
  {n:'Ingreso',cap:'Datos de ingreso',vis:`<div class="gal gv"><div class="card-pt"><b>${d.nombre}</b><span>Hoy: ${HOY}</span><span>FUM: ${d.fum}</span><span>${d.extra}</span></div><img src="img/simu2.jpg" alt="Simulador de parto" style="object-fit:cover"></div>`,
-  q:`Anamnesis: ${d.anam} Armen la fórmula obstétrica y calculen la edad gestacional y la FPP por FUM. Pueden usar la calculadora obstétrica de arriba.`,
+  q:`Anamnesis: ${d.anam} Armen la fórmula obstétrica y calculen la edad gestacional y la FPP por FUM. Pueden usar la calculadora FUM de arriba.`,
   data:[['FUM',d.fum],['Fecha de hoy',HOY],['Ciclos','Regulares']],
   type:'ingreso',ans:d.fo,eg:d.eg,fpp:d.fpp},
  {n:'Trabajo de parto',cap:'Monitor materno-fetal',live:{fcf:true},stages:d.stages,
@@ -765,39 +776,27 @@ function calcEval(src){ let i=0; const peek=()=>src[i], eat=c=>{ if(src[i]===c){
   function term(){ let v=fac(); for(;;){ if(eat('*')) v*=fac(); else if(eat('/')) v/=fac(); else return v; } }
   function exp(){ let v=term(); for(;;){ if(eat('+')) v+=term(); else if(eat('-')) v-=term(); else return v; } }
   src=src.replace(/\s/g,''); const v=exp(); if(i!==src.length) throw 0; return v; }
-/* Calculadora */
+/* Calculadora de embarazo por FUM */
 (function(){
-  const pad=$('#calc'), disp=$('#cDisp'); let expr='';
-  const keys=['7','8','9','÷','4','5','6','×','1','2','3','−','0',',','(',')','C','⌫','+','='];
-  $('#cKeys').innerHTML=keys.map(k=>`<button type="button" data-c="${k}" class="${'÷×−+='.includes(k)?'op':''}${k==='='?' eq':''}">${k}</button>`).join('');
-  const show=()=>disp.textContent=expr||'0';
-  $$('#cKeys button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.c;
-    if(k==='C') expr=''; else if(k==='⌫') expr=expr.slice(0,-1);
-    else if(k==='='){ const js=expr.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').replace(/,/g,'.'); try{ const r=calcEval(js); expr=Number.isFinite(r)?String(Math.round(r*1000)/1000).replace('.',','):'Error'; }catch(e){ expr='Error'; } }
-    else { if(expr==='Error') expr=''; expr+=k; }
-    show(); tone(1000,.03,'square',.03); }));
-  $('#calcBtn').addEventListener('click',()=>{ pad.hidden=!pad.hidden; });
-  $('#cClose').addEventListener('click',()=>pad.hidden=true);
-  show();
-})();
-
-
-(function(){
-  $$('[data-ct]').forEach(b=>b.addEventListener('click',()=>{ $$('[data-ct]').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); $$('[data-cp]').forEach(p=>p.hidden=p.dataset.cp!==b.dataset.ct); }));
   const MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   const fdate=d=>d.getUTCDate()+' de '+MES[d.getUTCMonth()]+' de '+d.getUTCFullYear();
-  $('#obGo').addEventListener('click',()=>{
-    const v=id=>parseInt($('#'+id).value,10); const fd=v('fD'),fm=v('fM'),fy=v('fY'),hd=v('hD'),hm=v('hM'),hy=v('hY');
-    const out=$('#obRes');
-    if([fd,fm,fy,hd,hm,hy].some(x=>!x)){ out.innerHTML='<p class="c-err">Completen la FUM y la fecha de hoy.</p>'; return; }
-    const F=Date.UTC(fy,fm-1,fd), H=Date.UTC(hy,hm-1,hd); const dias=Math.round((H-F)/864e5);
-    if(dias<0){ out.innerHTML='<p class="c-err">La FUM no puede ser posterior a hoy.</p>'; return; }
+  const parse=v=>{ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||''); return m?Date.UTC(+m[1],+m[2]-1,+m[3]):null; };
+  function calc(){
+    const F=parse($('#fumIn').value), H=parse($('#hoyIn').value), out=$('#obRes');
+    if(F==null||H==null){ $('#egOut').textContent='—'; $('#fppOut').textContent='—'; $('#egBar').style.width='0'; return; }
+    const dias=Math.round((H-F)/864e5);
+    if(dias<0){ out.innerHTML='<p class="c-err">La FUM no puede ser posterior a la fecha de consulta.</p>'; return; }
     const sem=Math.floor(dias/7), d=dias%7;
     const p1=new Date(F+7*864e5); let m=p1.getUTCMonth()-3, y=p1.getUTCFullYear()+1; if(m<0){ m+=12; y-=1; }
     const last=new Date(Date.UTC(y,m+1,0)).getUTCDate(); const fpp=new Date(Date.UTC(y,m,Math.min(p1.getUTCDate(),last)));
-    out.innerHTML=`<p><b>Edad gestacional</b><br>${dias} días ÷ 7 = <strong>${sem} semanas + ${d} ${d===1?'día':'días'}</strong></p><p><b>FPP (Naegele)</b><br>${fdate(new Date(F))} + 7 días = ${fdate(p1)}<br>− 3 meses + 1 año = <strong>${fdate(fpp)}</strong></p>`;
-    tone(880,.12,'triangle',.12);
-  });
+    $('#egOut').textContent=sem+' sem + '+d+(d===1?' día':' días'); $('#fppOut').textContent=fdate(fpp);
+    $('#egBar').style.width=Math.min(100,dias/280*100)+'%';
+    const tri=sem<14?'primer':sem<28?'segundo':'tercer';
+    out.innerHTML=`<p><b>Edad gestacional</b><br>${dias} días desde la FUM ÷ 7 = ${sem} semanas y ${d} ${d===1?'día':'días'} (${tri} trimestre)</p><p><b>FPP (Naegele)</b><br>${fdate(new Date(F))} + 7 días = ${fdate(p1)}; − 3 meses + 1 año = ${fdate(fpp)}</p>`;
+  }
+  $('#fumIn').addEventListener('input',calc); $('#hoyIn').addEventListener('input',calc);
+  $('#calcBtn').addEventListener('click',()=>{ $('#calc').hidden=!$('#calc').hidden; });
+  $('#cClose').addEventListener('click',()=>$('#calc').hidden=true);
 })();
 
 /* Texto del caso */
