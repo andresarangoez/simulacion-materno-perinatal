@@ -324,6 +324,20 @@ body.on-ini .ini-bg{opacity:.22}
 .holo{min-height:0!important}
 .photo,.holo{max-height:none}
 
+
+.shk{width:100%;display:flex;flex-direction:column;gap:10px;padding:4px}
+.shk-pt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:#0D2C66;border-radius:12px;padding:10px 12px}
+.shk-pt b{font-family:var(--m);font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#9FB7DE;margin-right:4px}
+.shk-pt span{background:rgba(255,255,255,.12);color:#FFFFFF;border-radius:8px;padding:4px 9px;font-weight:700;font-size:14px}
+.shk table{width:100%;border-collapse:separate;border-spacing:3px;font-size:13px;color:var(--ink);table-layout:fixed}
+.shk th,.shk td{padding:7px 6px;border-radius:7px;text-align:center;line-height:1.25;vertical-align:middle}
+.shk thead th{background:#0D2C66;color:#FFFFFF;font-family:var(--m);font-weight:800;font-size:12px}
+.shk tbody th{background:#DCE9F9;font-family:var(--m);font-weight:800;font-size:12px;text-align:left}
+.shk td{background:#F4F8FD}
+.shk td small{color:var(--mut);font-weight:600}
+.shk tbody tr td:nth-child(3){background:#EAF1FB}.shk tbody tr td:nth-child(4){background:#DCE9F9}.shk tbody tr td:nth-child(5){background:#C9DCF5}
+.shk-n{font-size:13px;color:var(--mut);font-weight:600}
+
 .grp-l{font-family:var(--m);font-weight:800;font-size:12px;letter-spacing:.14em;color:var(--cy);text-transform:uppercase}
 </style>
 </head>
@@ -425,11 +439,11 @@ const M={
   tx:'Daniela, 29 años, 7 semanas de amenorrea.\nAntecedentes: un parto vaginal (hijo vivo) y un aborto espontáneo.\nDolor súbito en la fosa ilíaca derecha, irradiado al hombro.\nMareo y sangrado vaginal escaso.\nObjetivo: reconocer y tratar el shock hipovolémico y dejarla lista para quirófano.',
   photo:'img/mesa.jpg',
   ph:[
-   {n:'Ingreso',tag:'Fase 01 · Ingreso a urgencias',cap:'Signos al ingreso',vis:MON([['PA','86/54',1],['FC','118',1],['FR','24',1],['T °C','36,1'],['SatO₂','95 %'],['Dolor','8/10',1]],'Ansiosa y agitada. Pálida, fría, sudorosa. Llenado capilar de 3 segundos.'),
+   {n:'Ingreso',tag:'',cap:'Signos al ingreso',vis:`<div class="gal gv"><img src="img/ectopico.jpg" alt="Localizaciones del embarazo ectópico">${MON([['PA','86/54',1],['FC','118',1],['FR','24',1],['T °C','36,1'],['SatO₂','95 %'],['Dolor','8/10',1]],'Ansiosa y agitada. Pálida, fría, sudorosa. Llenado capilar de 3 segundos.')}</div>`,
     q:'Anamnesis: embarazo actual de 7 semanas. Tiene un hijo de 5 años nacido por parto vaginal y tuvo un aborto espontáneo a las 9 semanas hace 2 años. No ha tenido cesáreas, ectópicos previos ni mortinatos. Armen su fórmula obstétrica.',
     data:[['FUM','Hace 7 semanas'],['Alergias','Pregunten'],['Compresas','2 compresas empapadas en la última hora']],
     type:'formula',ans:[3,1,1,0,0,0,1]},
-   {n:'Grado de shock',tag:'',cap:'Localizaciones del embarazo ectópico',vis:`<div class="gal gv"><img src="img/ectopico.jpg" alt="Localizaciones del embarazo ectópico">${MON([['PA','86/54',1],['FC','118',1],['FR','24',1],['T °C','36,1'],['Hemoglobina','9,1 g/dl',1],['Grupo','O +']],'Prueba de embarazo en sangre (β-hCG) positiva: 4800 mUI/ml. Ecografía: sin saco dentro del útero y con líquido libre abundante en el abdomen.')}</div>`,
+   {n:'Grado de shock',tag:'',cap:'Clasificación del shock hipovolémico',vis:`<div class="shk"><div class="shk-pt"><b>Daniela ahora</b><span>Agitada</span><span>Pálida, fría, sudorosa</span><span>Pulso 118</span><span>PA 86/54</span><span>Hemoglobina 9,1 g/dl</span></div><table><thead><tr><th>Parámetro</th><th>Sin shock</th><th>Leve</th><th>Moderado</th><th>Severo</th></tr></thead><tbody><tr><th>Pérdida</th><td>500–1000 ml<br><small>10–15 %</small></td><td>1000–1500 ml<br><small>16–30 %</small></td><td>1500–2000 ml<br><small>31–40 %</small></td><td>&gt; 2000 ml<br><small>&gt; 40 %</small></td></tr><tr><th>Conciencia</th><td>Normal</td><td>Normal o agitada</td><td>Agitada</td><td>Letárgica o inconsciente</td></tr><tr><th>Perfusión</th><td>Normal</td><td>Palidez, frialdad</td><td>Palidez, frialdad, sudoración</td><td>Palidez, frialdad, sudoración, llenado capilar &gt; 3 s</td></tr><tr><th>Pulso</th><td>60–90</td><td>91–100</td><td>101–120</td><td>&gt; 120</td></tr><tr><th>PA sistólica</th><td>&gt; 90</td><td>80–90</td><td>70–79</td><td>&lt; 70</td></tr></tbody></table><p class="shk-n">Se clasifica por el signo más alterado.</p></div>`,
     q:'Daniela tiene un embarazo ectópico roto con sangrado hacia el abdomen. Según el signo más alterado, ¿qué grado de shock hipovolémico tiene?',
     data:[['Conciencia','Ansiosa, agitada'],['Perfusión','Pálida, fría, sudorosa'],['Pulso','118 lpm'],['PA sistólica','86 mmHg'],['Índice de choque','FC ÷ PAS = 1,37']],
     type:'opts',opts:[['Sin shock: pérdida de 500 a 1000 ml',0],['Shock leve: pérdida de 1000 a 1500 ml',0],['Shock moderado: pérdida de 1500 a 2000 ml',1],['Shock severo: pérdida mayor de 2000 ml',0]]},
