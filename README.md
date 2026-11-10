@@ -14,8 +14,8 @@ Cada sala tiene dos situaciones (primigestante y multípara) de unos 30 minutos 
 ## Uso
 
 1. Abrir la página y tocar **Inicio**.
-2. Elegir la sala, la situación (1 o 2) y el equipo (1 a 4), y tocar **Iniciar**.
-3. Cada fase se supera al resolver su problema. El reloj y la tabla de tiempos registran a cada equipo.
+2. Elegir la sala y la situación (1 o 2) y tocar **Iniciar**. Las dos situaciones se repiten en la primera y en la segunda hora.
+3. Cada fase se supera al resolver su problema. El reloj y la tabla de tiempos registran la primera y la segunda hora.
 
 Funciona con flechas del teclado, deslizando en pantallas táctiles y en pantalla completa.
 

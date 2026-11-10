@@ -425,8 +425,7 @@ body.on-ini .ini-bg{opacity:.22}
         <button class="sala-card" type="button" data-sala="2" aria-pressed="false"><img src="img/simulador.jpg" alt=""><span class="sc-b"><b>Sala 2</b><span>Shock hipovolémico por embarazo ectópico roto</span><small>Primigestante y multípara</small></span></button>
       </div>
       <div class="panel r" style="--i:2;display:flex;flex-direction:column;gap:12px">
-        <div class="teamrow"><span class="grp-l" style="min-width:90px">Situación</span><div class="teamrow sitrow" id="sitPick"></div></div>
-        <div class="teamrow"><span class="grp-l" style="min-width:90px">Equipo</span><div class="teamrow" id="teamPick"></div><span class="msg" id="iniMsg"></span><button class="btn mag" type="button" id="goBtn" style="margin-left:auto;padding:14px 34px;font-size:17px;color:#FFFFFF;background:#0D2C66;border-color:#0D2C66">Iniciar</button></div>
+        <div class="teamrow"><span class="grp-l" style="min-width:90px">Situación</span><div class="teamrow sitrow" id="sitPick"></div><span class="msg" id="iniMsg"></span><button class="btn mag" type="button" id="goBtn" style="margin-left:auto;padding:14px 34px;font-size:17px;color:#FFFFFF;background:#0D2C66;border-color:#0D2C66">Iniciar</button></div>
       </div>
     </div>
   </section>
@@ -636,7 +635,7 @@ const done={};
 const results={};
 for(const s of [1,2]) for(const t of [1,2]){
   const m=M[s], c=m.sits[t], key=s+'-'+t; done[key]=c.ph.map(()=>0); results[key]=[];
-  deck.insertAdjacentHTML('beforeend',`<section class="slide" id="b${s}${t}" data-k="${key}" aria-label="El caso"><div class="in"><h2 class="r" style="--i:0">Situación ${t}: el caso</h2><div class="two"><div style="display:flex;flex-direction:column;gap:18px"><div class="panel r" style="--i:1"><div class="tx" data-tx></div></div><div class="rules r" style="--i:2;grid-template-columns:1fr"><div class="rule"><b>CADA FASE SE ABRE AL RESOLVERLA</b><p>El equipo de tres responde el problema de cada fase para pasar a la siguiente.</p></div><div class="rule"><b>LOS DATOS SE PIDEN</b><p>Tocan el dato que necesitan y el docente lo confirma en el simulador.</p></div></div></div><div class="photo r" style="--i:2"><img src="${s===1?'img/simu2.jpg':'img/mesa.jpg'}" alt="Simulación" style="object-fit:cover"></div></div><div class="row r" style="--i:3"><button class="btn mag" type="button" data-route="${key}">Ver la ruta</button></div></div></section>`);
+  deck.insertAdjacentHTML('beforeend',`<section class="slide" id="b${s}${t}" data-k="${key}" aria-label="El caso"><div class="in"><h2 class="r" style="--i:0">Situación ${t}: el caso</h2><div class="two"><div style="display:flex;flex-direction:column;gap:18px"><div class="panel r" style="--i:1"><div class="tx" data-tx></div></div><div class="rules r" style="--i:2;grid-template-columns:1fr"><div class="rule"><b>CADA FASE SE ABRE AL RESOLVERLA</b><p>El equipo responde el problema de cada fase para pasar a la siguiente.</p></div><div class="rule"><b>LOS DATOS SE PIDEN</b><p>Tocan el dato que necesitan y el docente lo confirma en el simulador.</p></div></div></div><div class="photo r" style="--i:2"><img src="${s===1?'img/simu2.jpg':'img/mesa.jpg'}" alt="Simulación" style="object-fit:cover"></div></div><div class="row r" style="--i:3"><button class="btn mag" type="button" data-route="${key}">Ver la ruta</button></div></div></section>`);
   deck.insertAdjacentHTML('beforeend',`<section class="slide" id="m${s}${t}" data-k="${key}" aria-label="Ruta"><div class="in"><h2 class="r" style="--i:0">Ruta de atención</h2><div class="map panel r" style="--i:1"><svg viewBox="0 0 1100 300" data-map role="img" aria-label="Ruta de fases"></svg></div><p class="hint r" style="--i:2">Toquen una fase abierta para entrar. Las cumplidas se encienden.</p></div></section>`);
   c.ph.forEach((p,i)=>{ const id=`p${s}${t}-${i}`; deck.insertAdjacentHTML('beforeend',`<section class="slide phase" id="${id}" data-k="${key}" data-p="${i}" aria-label="Fase ${i+1}">${phaseHTML(p,i,s,t,id)}</section>`); });
   deck.insertAdjacentHTML('beforeend',`<section class="slide" id="e${s}${t}" data-k="${key}" aria-label="Atención completa"><div class="in"><h2><span class="glow">Atención completa</span></h2><div class="two"><div class="panel"><span class="tag">Tabla de tiempos</span><div class="board" data-board style="margin-top:14px"></div><div class="row" style="margin-top:14px"><button class="btn sm" type="button" data-home>Volver al inicio</button></div></div><div class="panel"><span class="tag mag">Antes de salir de la sala</span><div class="deb" data-deb style="margin-top:14px;grid-template-columns:repeat(2,minmax(0,1fr))"></div></div></div></div></section>`);
@@ -695,20 +694,18 @@ function drawMap(key){
 let t0=null, tick=null, elapsed=0;
 const fmt=x=>String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');
 function startClock(){ clearInterval(tick); t0=Date.now(); elapsed=0; $('#clock').textContent='00:00'; tick=setInterval(()=>{ elapsed=Math.floor((Date.now()-t0)/1000); $('#clock').textContent=fmt(elapsed); },1000); }
-function finish(key){ clearInterval(tick); results[key].push(['Equipo '+state.team,elapsed]); results[key].sort((a,b)=>a[1]-b[1]); const [s,t]=key.split('-'); $(`#e${s}${t} [data-board]`).innerHTML=results[key].map((r,i)=>`<div><b>${i+1}</b><span>${r[0]}</span><span>${fmt(r[1])}</span></div>`).join(''); }
+function finish(key){ clearInterval(tick); results[key].push([(results[key].length===0?'Primera hora':'Segunda hora')+(results[key].length>1?' ('+(results[key].length+1)+')':''),elapsed]); const [s,t]=key.split('-'); $(`#e${s}${t} [data-board]`).innerHTML=results[key].map((r,i)=>`<div><b>${i+1}</b><span>${r[0]}</span><span>${fmt(r[1])}</span></div>`).join(''); }
 
 /* Inicio */
-$('#teamPick').innerHTML=[1,2,3,4].map(n=>`<button type="button" aria-pressed="false" data-t="${n}">Equipo ${n}</button>`).join('');
 $('#sitPick').innerHTML=[1,2].map(n=>`<button type="button" aria-pressed="false" data-s="${n}">Situación ${n}</button>`).join('');
 function sitLabels(){ const s=state.selSala; $$('#sitPick button').forEach(b=>{ const n=+b.dataset.s; b.innerHTML=`Situación ${n}`+(s?`<small>${M[s].sits[n].who}</small>`:''); }); }
 $$('.sala-card').forEach(c=>c.addEventListener('click',()=>{ $$('.sala-card').forEach(x=>x.setAttribute('aria-pressed',String(x===c))); state.selSala=+c.dataset.sala; sitLabels(); tone(900,.06,'triangle',.08); }));
 $$('#sitPick button').forEach(b=>b.addEventListener('click',()=>{ $$('#sitPick button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); state.selSit=+b.dataset.s; tone(900,.06,'triangle',.08); }));
-$$('#teamPick button').forEach(b=>b.addEventListener('click',()=>{ $$('#teamPick button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); state.selTeam=+b.dataset.t; tone(900,.06,'triangle',.08); }));
 $('#goBtn').addEventListener('click',()=>{
-  if(!state.selSala||!state.selSit||!state.selTeam){ $('#iniMsg').className='msg no'; $('#iniMsg').textContent='Elijan sala, situación y equipo.'; noSnd(); return; }
+  if(!state.selSala||!state.selSit){ $('#iniMsg').className='msg no'; $('#iniMsg').textContent='Elijan la sala y la situación.'; noSnd(); return; }
   $('#iniMsg').textContent='';
-  state.sala=state.selSala; state.sit=state.selSit; state.team=state.selTeam; const key=state.sala+'-'+state.sit; resetKey(key);
-  const w=$('#where'); w.hidden=false; w.textContent=`SALA ${state.sala} · SITUACIÓN ${state.sit} · EQUIPO ${state.team}`;
+  state.sala=state.selSala; state.sit=state.selSit; const key=state.sala+'-'+state.sit; resetKey(key);
+  const w=$('#where'); w.hidden=false; w.textContent=`SALA ${state.sala} · SITUACIÓN ${state.sit}`;
   ac(); okSnd(); startClock(); refreshList(); goId('b'+state.sala+state.sit);
 });
 $('#homeBtn').addEventListener('click',()=>goId('s-ini'));
