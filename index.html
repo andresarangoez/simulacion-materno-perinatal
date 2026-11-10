@@ -399,6 +399,10 @@ body.on-ini .ini-bg{opacity:.22}
 .c-err{color:var(--red);font-weight:700}
 .calc{width:300px}
 
+
+.lm-w .sc{position:absolute;right:6px;font-style:normal;font-family:var(--m);font-weight:700;font-size:10px;color:#6E86AE;z-index:1}
+.ctg .lm-waves{grid-template-rows:1.3fr 1fr}
+
 .grp-l{font-family:var(--m);font-weight:800;font-size:12px;letter-spacing:.14em;color:var(--cy);text-transform:uppercase}
 </style>
 </head>
@@ -479,12 +483,12 @@ const LIVE=[];
 function liveHTML(id,opts){
   const cells=[['FC','hr','lpm','c-hr'],['PA','bp','mmHg','c-bp'],['FR','rr','rpm','c-rr'],['SatO₂','spo2','%','c-sp'],['T','temp','°C','c-t']];
   if(opts&&opts.fcf) cells.push(['FCF','fcf','lpm','c-fcf']);
-  return `<div class="lmon" data-live="${id}"><div class="lm-waves"><div class="lm-w"><span>ECG II</span><canvas data-ecg></canvas></div><div class="lm-w"><span>${opts&&opts.fcf?'Tocodinamómetro':'Pleth'}</span><canvas data-wave2></canvas></div></div><div class="lm-grid">${cells.map(c=>`<div class="lm-c ${c[3]}" data-k="${c[1]}"><span>${c[0]}</span><b>--</b><small>${c[2]}</small></div>`).join('')}</div>${opts&&opts.note!==false?'<div class="lm-note" data-note></div>':''}</div>`;
+  return `<div class="lmon${opts&&opts.fcf?' ctg':''}" data-live="${id}"><div class="lm-waves"><div class="lm-w"><span>${opts&&opts.fcf?'FCF · lpm':'ECG II'}</span>${opts&&opts.fcf?'<i class="sc" style="top:22%">160</i><i class="sc" style="top:58%">110</i>':''}<canvas data-ecg></canvas></div><div class="lm-w"><span>${opts&&opts.fcf?'Contracciones · TOCO mmHg':'Pleth'}</span><canvas data-wave2></canvas></div></div><div class="lm-grid">${cells.map(c=>`<div class="lm-c ${c[3]}" data-k="${c[1]}"><span>${c[0]}</span><b>--</b><small>${c[2]}</small></div>`).join('')}</div>${opts&&opts.note!==false?'<div class="lm-note" data-note></div>':''}</div>`;
 }
 function Live(el){
   const st={hr:80,sys:120,dia:80,rr:16,spo2:98,temp:36.8,fcf:0,toco:0,note:'',cur:{}};
   const ecg=$('[data-ecg]',el), w2=$('[data-wave2]',el);
-  let t=0, lastBeat=0, x=0, x2=0, prevY=null, prevY2=null;
+  let t=0, lastBeat=0, lastF=0, fv=0, x=0, x2=0, prevY=null, prevY2=null;
   const ctx=ecg.getContext('2d'), ctx2=w2.getContext('2d');
   function size(){ [ecg,w2].forEach(c=>{ const r=c.getBoundingClientRect(); c.width=Math.max(10,r.width*devicePixelRatio); c.height=Math.max(10,r.height*devicePixelRatio); }); x=0;x2=0;prevY=null;prevY2=null; ctx.fillStyle='#071a38'; ctx.fillRect(0,0,ecg.width,ecg.height); ctx2.fillStyle='#071a38'; ctx2.fillRect(0,0,w2.width,w2.height); }
   function ecgY(ph){ // ph 0..1 dentro del latido
@@ -509,18 +513,24 @@ function Live(el){
     const dt=Math.min(.05,(now-last)/1000); last=now; t+=dt; numT+=dt;
     if(numT>1.6){ numT=0; updNums(); }
     const hr=st.cur.hr||st.hr, period=60/hr;
-    if(t-lastBeat>=period){ lastBeat=t; if(soundOn){ const sp=st.cur.spo2||st.spo2; tone(400+ (sp-80)*25,.07,'sine',.07); } }
+    const ctgMode=!!st.fcf;
+    const fper=60/Math.max(60,st.fcf||140);
+    if(ctgMode){ if(t-lastF>=fper){ lastF=t; if(soundOn) tone(1250,.035,'triangle',.05); } }
+    if(t-lastBeat>=period){ lastBeat=t; if(soundOn&&!ctgMode){ const sp=st.cur.spo2||st.spo2; tone(400+ (sp-80)*25,.07,'sine',.07); } }
     const ph=((t-lastBeat)/period);
     const W=ecg.width,H=ecg.height, px=dt*W/4;
     // ECG
-    ctx.fillStyle='#071a38'; ctx.fillRect(x,0,px+8,H);
-    const y=H*.55-ecgY(ph)*H*.4;
-    ctx.strokeStyle='#5CF2A0'; ctx.lineWidth=2*devicePixelRatio; ctx.beginPath(); ctx.moveTo(x,prevY==null?y:prevY); ctx.lineTo(x+px,y); ctx.stroke(); prevY=y; x+=px; if(x>W){ x=0; prevY=null; }
+    const cyc=(()=>{ if(!ctgMode) return 0; const per=30/Math.max(1,st.toco); const dur=Math.min(.6,(st.dur||50)/60*per/ (per)) ; const cp=(t%per)/per; const fr=Math.min(.45,(st.dur||50)/ (600/Math.max(1,st.toco))); return cp<fr?Math.sin(cp/fr*Math.PI):0; })();
+    let y, pxx=px;
+    if(ctgMode){ pxx=dt*W/30; fv+= (Math.random()*2-1)*1.6; fv*=.92; const bpm=st.fcf+fv-(st.decel?cyc*st.decel:0); y=H*(1-(bpm-60)/140); 
+      ctx.fillStyle='#071a38'; ctx.fillRect(x,0,pxx+8,H); ctx.fillStyle='rgba(124,240,168,.10)'; ctx.fillRect(x,H*(1-(160-60)/140),pxx+8,H*(50/140)); ctx.strokeStyle='#C9A2FF'; }
+    else { ctx.fillStyle='#071a38'; ctx.fillRect(x,0,px+8,H); y=H*.55-ecgY(ph)*H*.4; ctx.strokeStyle='#5CF2A0'; }
+    const px_=ctgMode?pxx:px; ctx.lineWidth=2*devicePixelRatio; ctx.beginPath(); ctx.moveTo(x,prevY==null?y:prevY); ctx.lineTo(x+px_,y); ctx.stroke(); prevY=y; x+=px_; if(x>W){ x=0; prevY=null; }
     // onda 2
-    const W2=w2.width,H2=w2.height, px2=dt*W2/(st.fcf?14:4);
+    const W2=w2.width,H2=w2.height, px2=dt*W2/(st.fcf?30:4);
     ctx2.fillStyle='#071a38'; ctx2.fillRect(x2,0,px2+8,H2);
     let y2;
-    if(st.fcf){ const per=600/Math.max(1,st.toco); const cp=(t%per)/per; const c=cp<.12?Math.sin(cp/.12*Math.PI):0; y2=H2*.85-c*H2*.7-(Math.random()*.02*H2); ctx2.strokeStyle='#FFD36B'; }
+    if(st.fcf){ y2=H2*.85-cyc*H2*.68-(Math.random()*.015*H2); ctx2.strokeStyle='#FFD36B'; }
     else { const p2=((t-lastBeat)/period); y2=H2*.75-Math.max(0,Math.sin(Math.min(1,p2*1.6)*Math.PI))*H2*.5; ctx2.strokeStyle='#7FD3FF'; }
     ctx2.lineWidth=2*devicePixelRatio; ctx2.beginPath(); ctx2.moveTo(x2,prevY2==null?y2:prevY2); ctx2.lineTo(x2+px2,y2); ctx2.stroke(); prevY2=y2; x2+=px2; if(x2>W2){ x2=0; prevY2=null; }
   }
@@ -556,7 +566,7 @@ const S1PH=(d)=>[
   data:[['PA','112/70'],['FC','88 lpm'],['Útero','Firme, bajo el ombligo'],['Sangrado','Moderado']],
   type:'opts',opts:[['Pasarla a hospitalización y revisar tono y sangrado a las cuatro horas',0],['Vigilar tono, sangrado, PA y FC cada 15 minutos y apoyar la lactancia',1],['Hacer masaje uterino continuo aunque el útero ya esté firme y contraído',0],['Llevar al bebé a la cuna de calor para que la madre descanse una hora',0]]}
 ];
-const STG=(arr)=>arr.map(a=>({label:a[0],v:{hr:a[1],sys:a[2],dia:a[3],rr:a[4],spo2:a[5],temp:a[6],fcf:a[7],toco:a[8]},note:`<b>${a[9]}</b>`}));
+const STG=(arr)=>arr.map((a,k)=>({label:a[0],v:{hr:a[1],sys:a[2],dia:a[3],rr:a[4],spo2:a[5],temp:a[6],fcf:a[7],toco:a[8],dur:[40,45,50,60][k]||50,decel:k>=3?18:(k===2?8:0)},note:`<b>${a[9]}</b>`}));
 const M={
  1:{name:'Sala 1 · Trabajo de parto normal',sits:{
   1:{who:'Valentina · primigestante',tx:'Valentina, 19 años, primigestante.\nFUM: 8 de febrero de 2026. Hoy: 10 de noviembre de 2026.\nContracciones desde hace 8 horas.\nObjetivo: madre y bebé estables al final de la primera hora.',
@@ -669,7 +679,7 @@ function wireAll(){
   $$('.phase').forEach(sec=>{
     const key=sec.dataset.k, [s,t]=key.split('-').map(Number), i=+sec.dataset.p, p=M[s].sits[t].ph[i], msg=$('[data-msg]',sec);
     $$('[data-dv]',sec).forEach(b=>b.addEventListener('click',()=>{ if(b.classList.contains('shown')) return; b.classList.add('shown'); b.lastChild.textContent=b.dataset.dv; tone(1200,.05,'square',.04); }));
-    if(p.live){ const L=Live($('[data-live]',sec)); lives[sec.id]=L; sec._live=L; const setStage=k=>{ const st=p.stages[k]; L.set(Object.assign({fcf:0,toco:0},st.v,{note:st.note})); $$('[data-st]',sec).forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.st===k))); }; sec._stage=setStage; $$('[data-st]',sec).forEach(b=>b.addEventListener('click',()=>{ setStage(+b.dataset.st); tone(900,.05,'square',.05); })); setStage(0);
+    if(p.live){ const L=Live($('[data-live]',sec)); lives[sec.id]=L; sec._live=L; const setStage=k=>{ const st=p.stages[k]; L.set(Object.assign({fcf:0,toco:0,dur:50,decel:0},st.v,{note:st.note})); $$('[data-st]',sec).forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.st===k))); }; sec._stage=setStage; $$('[data-st]',sec).forEach(b=>b.addEventListener('click',()=>{ setStage(+b.dataset.st); tone(900,.05,'square',.05); })); setStage(0);
       const rv=$('[data-reveal]',sec); if(rv) rv.addEventListener('click',()=>{ const lb=$('#lb'); $('img',lb).src=p.reveal; lb.hidden=false; }); }
     const win=()=>{ done[key][i]=1; msg.className='msg ok'; msg.textContent='Correcto. Fase '+(i+1)+' superada.'; okSnd(); const u=$('#unlock'); const last=i===M[s].sits[t].ph.length-1; $('div',u).textContent=last?'ATENCIÓN COMPLETA':'FASE SUPERADA'; u.classList.remove('on'); void u.offsetWidth; u.classList.add('on'); drawMap(key); setTimeout(()=>{ if(last){ finish(key); goId('e'+s+t); } else goId(`p${s}${t}-${i+1}`); }, reduce?100:1600); };
     const fail=x=>{ msg.className='msg no'; msg.textContent=x; noSnd(); };
