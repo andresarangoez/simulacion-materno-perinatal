@@ -359,7 +359,7 @@ body.on-ini .ini-bg{opacity:.22}
       <h2 class="r" style="--i:0">¿En qué sala están?</h2>
       <div class="ini r" style="--i:1">
         <button class="sala-card" type="button" data-sala="1" aria-pressed="false"><img src="img/recepcion.jpg" alt=""><span class="sc-b"><b>Sala 1</b><span>Trabajo de parto normal</span><small>Camila · 39 + 2 semanas</small></span></button>
-        <button class="sala-card" type="button" data-sala="2" aria-pressed="false"><img src="img/simulador.jpg" alt=""><span class="sc-b"><b>Sala 2</b><span>Embarazo ectópico roto</span><small>Daniela · 7 semanas de amenorrea</small></span></button>
+        <button class="sala-card" type="button" data-sala="2" aria-pressed="false"><img src="img/simulador.jpg" alt=""><span class="sc-b"><b>Sala 2</b><span>Shock hipovolémico por embarazo ectópico roto</span><small>Daniela · 7 semanas de amenorrea</small></span></button>
       </div>
       <div class="panel r" style="--i:2;display:flex;flex-direction:column;gap:14px">
         <span class="grp-l">Equipo</span>
@@ -421,22 +421,22 @@ const M={
     data:[['PA','112/70'],['FC','88 lpm'],['Útero','Firme, bajo el ombligo'],['Sangrado','Moderado']],
     type:'opts',opts:[['Pasarla a la habitación y revisarla en 4 horas',0],['Vigilar tono, sangrado, PA y FC cada 15 minutos y apoyar la lactancia',1],['Masaje uterino continuo, aunque el útero esté firme',0],['Llevarse al bebé a la cuna para que la madre descanse',0]]}
   ]},
- 2:{name:'Sala 2 · Embarazo ectópico roto', patient:'Daniela',
-  tx:'Daniela, 29 años, 7 semanas de amenorrea.\nAntecedentes: un parto vaginal (hijo vivo) y un aborto espontáneo.\nDolor súbito en la fosa ilíaca derecha, irradiado al hombro.\nMareo y sangrado vaginal escaso.\nObjetivo: estabilizarla y dejarla lista para quirófano.',
+ 2:{name:'Sala 2 · Shock hipovolémico por ectópico roto', patient:'Daniela',
+  tx:'Daniela, 29 años, 7 semanas de amenorrea.\nAntecedentes: un parto vaginal (hijo vivo) y un aborto espontáneo.\nDolor súbito en la fosa ilíaca derecha, irradiado al hombro.\nMareo y sangrado vaginal escaso.\nObjetivo: reconocer y tratar el shock hipovolémico y dejarla lista para quirófano.',
   photo:'img/mesa.jpg',
   ph:[
-   {n:'Ingreso',tag:'Fase 01 · Ingreso a urgencias',cap:'Signos al ingreso',vis:MON([['PA','86/54',1],['FC','122',1],['FR','24',1],['T °C','36,1'],['SatO₂','95 %'],['Dolor','8/10',1]],'Pálida, fría, sudorosa. Llenado capilar de 3 segundos.'),
+   {n:'Ingreso',tag:'Fase 01 · Ingreso a urgencias',cap:'Signos al ingreso',vis:MON([['PA','86/54',1],['FC','118',1],['FR','24',1],['T °C','36,1'],['SatO₂','95 %'],['Dolor','8/10',1]],'Ansiosa y agitada. Pálida, fría, sudorosa. Llenado capilar de 3 segundos.'),
     q:'Anamnesis: embarazo actual de 7 semanas. Tiene un hijo de 5 años nacido por parto vaginal y tuvo un aborto espontáneo a las 9 semanas hace 2 años. No ha tenido cesáreas, ectópicos previos ni mortinatos. Armen su fórmula obstétrica.',
     data:[['FUM','Hace 7 semanas'],['Alergias','Pregunten'],['Compresas','2 compresas empapadas en la última hora']],
     type:'formula',ans:[3,1,1,0,0,0,1]},
-   {n:'Valoración',tag:'Fase 02 · ¿Qué le pasa?',cap:'Localizaciones del embarazo ectópico',vis:`<div class="gal gv"><img src="img/ectopico.jpg" alt="Localizaciones del embarazo ectópico">${MON([['PA','86/54',1],['FC','122',1],['FR','24',1],['T °C','36,1'],['Hemoglobina','9,1 g/dl',1],['Grupo','O +']],'Prueba de embarazo en sangre (β-hCG) positiva: 4800 mUI/ml. Ecografía: sin saco dentro del útero y con líquido libre abundante en el abdomen.')}</div>`,
-    q:'Con los signos y los resultados, ¿qué le está pasando a Daniela?',
-    data:[['Dolor','Súbito, irradiado al hombro'],['Abdomen','Distendido y doloroso'],['Sangrado vaginal','Escaso']],
-    type:'opts',opts:[['Amenaza de aborto, hemodinámicamente estable',0],['Embarazo ectópico roto con choque hipovolémico',1],['Infección urinaria con dolor referido',0],['Apendicitis sin compromiso hemodinámico',0]]},
-   {n:'Accesos',tag:'Fase 03 · Primeras acciones',cap:'Monitor',vis:MON([['PA','86/54',1],['FC','122',1],['FR','24',1],['T °C','36,0'],['SatO₂','95 %'],['Dolor','8/10',1]],'Sigue pálida y fría. El ginecólogo indica cirugía urgente.'),
-    q:'¿Cuántos accesos venosos canalizan y qué líquido inician mientras se prepara el quirófano?',
+   {n:'Grado de shock',tag:'',cap:'Localizaciones del embarazo ectópico',vis:`<div class="gal gv"><img src="img/ectopico.jpg" alt="Localizaciones del embarazo ectópico">${MON([['PA','86/54',1],['FC','118',1],['FR','24',1],['T °C','36,1'],['Hemoglobina','9,1 g/dl',1],['Grupo','O +']],'Prueba de embarazo en sangre (β-hCG) positiva: 4800 mUI/ml. Ecografía: sin saco dentro del útero y con líquido libre abundante en el abdomen.')}</div>`,
+    q:'Daniela tiene un embarazo ectópico roto con sangrado hacia el abdomen. Según el signo más alterado, ¿qué grado de shock hipovolémico tiene?',
+    data:[['Conciencia','Ansiosa, agitada'],['Perfusión','Pálida, fría, sudorosa'],['Pulso','118 lpm'],['PA sistólica','86 mmHg'],['Índice de choque','FC ÷ PAS = 1,37']],
+    type:'opts',opts:[['Sin shock: pérdida de 500 a 1000 ml',0],['Shock leve: pérdida de 1000 a 1500 ml',0],['Shock moderado: pérdida de 1500 a 2000 ml',1],['Shock severo: pérdida mayor de 2000 ml',0]]},
+   {n:'Reanimación inicial',tag:'',cap:'Monitor',vis:MON([['PA','86/54',1],['FC','118',1],['FR','24',1],['T °C','36,0'],['SatO₂','95 %'],['Dolor','8/10',1]],'Sigue pálida y fría. El ginecólogo indica cirugía urgente.'),
+    q:'Inicien la reanimación del shock mientras se prepara el quirófano.',
     data:[['Oxígeno','Pregunten si ya está'],['Posición','Supina']],
-    type:'pick',groups:[['Accesos venosos de 16 a 18 G',['1','2'],'2'],['Líquido',['Dextrosa al 5 %','Cristaloide tibio en bolo'],'Cristaloide tibio en bolo']]},
+    type:'pick',groups:[['Oxígeno',['No por ahora','Sí'],'Sí'],['Accesos venosos de 16 a 18 G',['1','2'],'2'],['Líquido',['Dextrosa al 5 %','Cristaloide tibio en bolo'],'Cristaloide tibio en bolo']]},
    {n:'Sonda vesical',tag:'Fase 04 · Dispositivos',cap:'Tras 1000 ml',vis:MON([['PA','96/60'],['FC','110',1],['FR','22',1],['T °C','36,0'],['SatO₂','97 %'],['Dolor','7/10',1]],'Mejora un poco tras 1000 ml. Falta la sonda vesical para medir la diuresis.'),
     q:'Pongan los pasos de la sonda vesical en orden. Si se equivocan, la tarjeta se pone roja.',
     data:[['Alergias','Pregunten antes de empezar'],['Sonda','14 a 16 Fr']],

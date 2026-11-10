@@ -7,7 +7,7 @@ Presentación interactiva para la práctica de simulación de la Facultad de Enf
 ## Salas
 
 - **Sala 1 · Trabajo de parto normal:** dilatación, expulsivo, recepción del recién nacido, pinzamiento, alumbramiento y posparto.
-- **Sala 2 · Embarazo ectópico roto:** ingreso, valoración, accesos, sonda vesical, preparación prequirúrgica y entrega a quirófano.
+- **Sala 2 · Shock hipovolémico por embarazo ectópico roto:** ingreso, grado de shock, reanimación inicial, sonda vesical, transfusión y preparación prequirúrgica.
 
 ## Uso
 
