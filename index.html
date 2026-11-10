@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Simulación materno-perinatal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&family=Jost:wght@500;600;700&display=swap">
+<style>
+:root{
+  --bg:#FFFFFF; --bg2:#F4F8FD; --line:rgba(28,95,198,.12); --line2:rgba(28,95,198,.28);
+  --cy:#1C5FC6; --cy2:#0D2C66; --mag:#1C5FC6; --lime:#0D2C66; --amber:#3A8CEA; --red:#D64545;
+  --ink:#0D2C66; --mut:#4A5F80; --dim:#9AABC4;
+  --f:"Quicksand",system-ui,sans-serif; --m:"Raleway",system-ui,sans-serif; --h:Futura,"Futura PT","Jost",system-ui,sans-serif;
+  --ease:cubic-bezier(.32,.72,0,1);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);overflow:hidden;-webkit-font-smoothing:antialiased;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--cy);outline-offset:3px}
+[hidden]{display:none!important}
+
+/* Fondo de sala */
+.room{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+   radial-gradient(55% 45% at 72% 28%, rgba(28,95,198,.07), transparent 70%),
+   radial-gradient(40% 40% at 12% 88%, rgba(58,140,234,.10), transparent 70%),
+   #FFFFFF}
+.grid{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(70% 70% at 50% 45%,#000 30%,transparent 85%);-webkit-mask-image:radial-gradient(70% 70% at 50% 45%,#000 30%,transparent 85%)}
+.scan{position:fixed;left:0;right:0;height:120px;top:-120px;z-index:1;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(28,95,198,.04),transparent);animation:scan 7s linear infinite}
+@keyframes scan{to{top:100%}}
+
+/* HUD */
+.hud{position:fixed;left:0;right:0;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px max(20px,3vw)}
+.hud img{height:44px;width:auto;display:block;opacity:.95}
+.hud-r{display:flex;align-items:center;gap:12px;font-family:var(--m);font-size:12px;color:var(--mut);letter-spacing:.08em}
+.chip{border:1px solid var(--line2);border-radius:999px;padding:6px 12px;background:rgba(255,255,255,.8);backdrop-filter:blur(6px);display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px var(--lime);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.3}}
+.ghost{background:transparent}
+.ghost:hover{border-color:var(--cy);color:var(--ink)}
+#clock{color:var(--cy);font-weight:600}
+
+/* Diapositivas */
+.deck{position:fixed;inset:0;z-index:2}
+.slide{position:absolute;inset:0;padding:86px max(20px,4vw) 84px;overflow-y:auto;display:flex;opacity:0;visibility:hidden;transform:scale(1.02);filter:blur(8px);transition:opacity .5s var(--ease),transform .7s var(--ease),filter .5s var(--ease),visibility 0s .7s}
+.slide.on{opacity:1;visibility:visible;transform:none;filter:none;transition:opacity .5s var(--ease),transform .7s var(--ease),filter .5s var(--ease),visibility 0s}
+.in{margin:auto;width:100%;max-width:1180px;display:flex;flex-direction:column;gap:22px}
+.slide.on .r{animation:rise .7s var(--ease) both;animation-delay:calc(var(--i,0)*90ms)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.tag{font-family:var(--m);font-weight:700;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--cy)}
+.tag.mag{color:var(--mag)}
+h1,h2,h3{margin:0;font-family:var(--h);font-weight:600;letter-spacing:-.025em;text-wrap:balance}
+h1{font-size:clamp(46px,7.4vw,104px);line-height:.96}
+h2{font-size:clamp(32px,4.4vw,58px);line-height:1.02}
+h3{font-size:20px;letter-spacing:-.01em}
+p{margin:0}
+.lead{font-size:clamp(17px,1.8vw,21px);line-height:1.5;color:var(--mut);max-width:58ch}
+.lead b{color:var(--ink);font-weight:600}
+.glow{background:linear-gradient(90deg,#0D2C66,#1C5FC6 55%,#3A8CEA);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.panel{position:relative;border:1px solid var(--line2);border-radius:18px;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);padding:22px;box-shadow:0 10px 30px rgba(13,44,102,.06)}
+.panel::before,.panel::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--cy)}
+.panel::before{top:-1px;left:-1px;border-right:0;border-bottom:0;border-top-left-radius:18px}
+.panel::after{bottom:-1px;right:-1px;border-left:0;border-top:0;border-bottom-right-radius:18px}
+.two{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:24px;align-items:stretch}
+@media (max-width:860px){.two{grid-template-columns:1fr}}
+.btn{border:1px solid var(--cy);background:var(--cy);color:#FFFFFF;font-family:var(--m);border-radius:12px;padding:12px 18px;font-weight:600;letter-spacing:.01em;transition:background .25s,transform .2s var(--ease),box-shadow .25s}
+.btn:hover{background:#174FA6;box-shadow:0 6px 18px rgba(28,95,198,.25)}
+.btn:active{transform:scale(.97)}
+.btn.mag{border-color:#0D2C66;background:#0D2C66}
+.btn.mag:hover{background:#0A2350;box-shadow:0 6px 18px rgba(13,44,102,.25)}
+.btn.sm{padding:8px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* Portada */
+.cover{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;align-items:center}
+@media (max-width:860px){.cover{grid-template-columns:1fr}}
+.orb{position:relative;aspect-ratio:1;width:100%;max-width:470px;justify-self:center}
+.orb svg{width:100%;height:100%;overflow:visible}
+.spin{transform-origin:200px 200px;animation:spin 24s linear infinite}
+.spin.rev{animation-duration:36s;animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pulse{animation:pls 1.1s ease-in-out infinite;transform-origin:200px 200px}
+@keyframes pls{0%,100%{transform:scale(1)}15%{transform:scale(1.06)}30%{transform:scale(.99)}}
+.ecg path{stroke-dasharray:900;stroke-dashoffset:900;animation:draw 2.6s linear infinite}
+@keyframes draw{to{stroke-dashoffset:0}}
+.team{display:flex;flex-direction:column;gap:8px}
+.team .t{font-family:var(--m);font-size:12px;letter-spacing:.18em;color:var(--mut);text-transform:uppercase}
+.names{display:flex;flex-wrap:wrap;gap:8px}
+.names span{border:1px solid var(--line2);border-radius:10px;padding:10px 14px;font-weight:700;background:#F4F8FD;color:var(--ink)}
+.meta{font-family:var(--m);font-weight:700;font-size:12px;color:var(--mut);letter-spacing:.14em}
+
+/* Transmisión */
+.tx{font-family:var(--f);font-weight:600;font-size:clamp(15px,1.6vw,18px);line-height:1.7;color:var(--ink);min-height:9em;white-space:pre-wrap}
+.tx .cur{display:inline-block;width:.6em;height:1.1em;background:var(--cy);vertical-align:-2px;animation:blink 1s infinite}
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.rules{grid-template-columns:1fr}}
+.rule{border:1px solid var(--line);border-radius:14px;padding:16px;background:#F7FAFE;display:flex;flex-direction:column;gap:6px}
+.rule b{font-family:var(--m);color:var(--cy);font-size:13px}
+.rule p{color:var(--mut);font-size:15px;line-height:1.45}
+
+/* Mapa */
+.map{position:relative;width:100%}
+.map svg{width:100%;height:auto;display:block}
+.node{cursor:pointer}
+.node circle.ring{fill:#FFFFFF;stroke:var(--dim);stroke-width:2;transition:stroke .4s,filter .4s}
+.node.open circle.ring{stroke:var(--cy);filter:drop-shadow(0 0 6px rgba(28,95,198,.35))}
+.node.done circle.ring{stroke:var(--lime);fill:rgba(28,95,198,.10);filter:drop-shadow(0 0 6px rgba(28,95,198,.35))}
+.node text{font-family:var(--f);fill:var(--mut);font-size:15px;font-weight:600}
+.node.open text,.node.done text{fill:var(--ink)}
+.node .num{font-family:var(--m);font-size:13px;fill:var(--dim)}
+.node.open .num{fill:var(--cy)}.node.done .num{fill:var(--lime)}
+.node .lock{fill:var(--dim)}
+.node.open .lock,.node.done .lock{display:none}
+.path{stroke:var(--line2);stroke-width:2;fill:none;stroke-dasharray:6 8}
+.path.lit{stroke:var(--lime);stroke-dasharray:none;filter:none}
+.score{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.teams button{border:1px solid var(--line2);background:transparent;border-radius:10px;padding:8px 12px;font-weight:600;color:var(--mut)}
+.teams button[aria-pressed="true"]{border-color:var(--ink);color:#FFFFFF;background:var(--ink)}
+
+/* Fase */
+.phase-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.holo{position:relative;border-radius:18px;overflow:hidden;min-height:320px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line2);background:radial-gradient(70% 70% at 50% 55%,rgba(28,95,198,.08),transparent 70%),#F7FAFE}
+.holo svg{width:100%;height:100%;max-height:380px}
+.holo::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(28,95,198,.035) 0 1px,transparent 1px 4px);pointer-events:none}
+.holo .cap{position:absolute;left:14px;bottom:12px;font-family:var(--m);font-size:11px;letter-spacing:.14em;color:var(--cy);text-transform:uppercase}
+.hl{fill:none;stroke:var(--cy);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;filter:url(#glow)}
+.hl.th{stroke-width:1.2;opacity:.55}
+.hl.mg{stroke:var(--mag)}
+.hl.lm{stroke:var(--lime)}
+.hl.am{stroke:var(--amber)}
+.hf{fill:rgba(28,95,198,.08);stroke:none}
+.hf.mg{fill:rgba(227,163,58,.16)}
+.ht{font-family:var(--m);font-weight:700;font-size:11px;fill:var(--cy);letter-spacing:.08em}
+.ht.mg{fill:var(--mag)}
+.float{animation:flt 4s ease-in-out infinite}
+@keyframes flt{50%{transform:translateY(-6px)}}
+.prob{display:flex;flex-direction:column;gap:11px}
+.prob .q{font-size:clamp(19px,2vw,23px);font-weight:600;line-height:1.35}
+.data{display:flex;flex-wrap:wrap;gap:8px}
+.data button{border:1px dashed var(--line2);background:transparent;border-radius:10px;padding:8px 12px;font-family:var(--m);font-size:13px;color:var(--mut);text-align:left}
+.data button.shown{border-style:solid;border-color:var(--cy);color:var(--ink);background:#EEF4FC}
+.data button b{color:var(--cy);font-weight:600;margin-right:6px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts button{text-align:left;border:1px solid var(--line2);background:#FFFFFF;color:var(--ink);border-radius:12px;padding:12px 14px;font-size:16px;transition:border-color .3s,background .3s}
+.opts button:hover{border-color:var(--cy)}
+.opts button.ok{border-color:var(--cy);background:#EAF1FB}
+.opts button.no{border-color:var(--red);background:#FBE6E6;animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.code{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.code input{width:min(260px,100%);background:#FFFFFF;border:1px solid var(--line2);border-radius:12px;padding:12px 14px;font-family:var(--m);font-size:22px;letter-spacing:.3em;color:var(--cy);text-transform:uppercase}
+.code input.no{border-color:var(--red);animation:shake .4s}
+.msg{font-family:var(--m);font-size:13px;color:var(--mut);min-height:1.4em}
+.msg.ok{color:var(--lime)}.msg.no{color:var(--red)}
+.unlock{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0}
+.unlock.on{animation:unl 1.6s var(--ease)}
+.unlock div{font-family:var(--m);font-size:clamp(22px,4vw,44px);letter-spacing:.3em;color:var(--lime);border:2px solid var(--lime);padding:18px 30px;border-radius:14px;background:#FFFFFF;box-shadow:0 20px 60px rgba(13,44,102,.18)}
+@keyframes unl{0%{opacity:0;transform:scale(.8)}20%{opacity:1;transform:scale(1.04)}75%{opacity:1;transform:scale(1)}100%{opacity:0}}
+.mini{display:flex;gap:6px;flex-wrap:wrap}
+.mini span{font-family:var(--m);font-size:12px;border:1px solid var(--line);border-radius:6px;padding:4px 8px;color:var(--mut)}
+.mini span b{color:var(--cy)}
+.range{display:flex;flex-direction:column;gap:10px}
+.range input{width:100%;accent-color:var(--cy)}
+.big{font-family:var(--m);font-size:clamp(40px,6vw,72px);font-weight:600;color:var(--cy);line-height:1;font-variant-numeric:tabular-nums}
+.pick{display:flex;gap:8px;flex-wrap:wrap}
+.pick button{border:1px solid var(--line2);background:#FFFFFF;color:var(--ink);border-radius:10px;padding:10px 16px;font-family:var(--m);font-weight:600}
+.pick button[aria-pressed="true"]{border-color:var(--cy);background:var(--cy);color:#FFFFFF}
+.hint{font-size:14px;color:var(--dim)}
+
+/* Final */
+.board{display:flex;flex-direction:column;gap:8px}
+.board div{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-family:var(--m)}
+.board div b{color:var(--lime)}
+.board div:first-child{border-color:var(--cy);background:#EAF1FB}
+.deb{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.deb{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.deb button{text-align:left;border:1px solid var(--line2);background:#F7FAFE;color:var(--ink);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;min-height:150px}
+.deb button b{font-family:var(--m);font-size:12px;color:var(--cy);letter-spacing:.14em}
+.deb button span{font-size:17px;font-weight:600;line-height:1.3}
+.deb button small{font-size:14px;color:var(--mut);line-height:1.4;display:none}
+.deb button[aria-expanded="true"]{border-color:var(--ink);background:#EAF1FB}
+.deb button[aria-expanded="true"] small{display:block}
+
+/* Navegación */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:center;gap:14px;padding:14px max(20px,3vw)}
+.nav button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:#FFFFFF;display:flex;align-items:center;justify-content:center}
+.nav button:disabled{opacity:.3;cursor:default}
+.nav svg{width:18px;height:18px;stroke:var(--ink);stroke-width:2;fill:none}
+.bar{flex:1;height:3px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#0D2C66,#1C5FC6);transition:width .6s var(--ease)}
+.cnt{font-family:var(--m);font-size:12px;color:var(--mut);min-width:54px;text-align:right}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Portada estilo plantilla FUCS */
+.cv{position:relative;margin:auto;width:100%;max-width:1240px;min-height:100%;display:grid;grid-template-rows:auto 1fr auto;gap:20px}
+.cv-logos{display:flex;align-items:center;gap:34px;flex-wrap:wrap}
+.cv-logos img{height:clamp(90px,13vw,150px);width:auto}
+.fe{display:inline-flex;align-items:center;gap:10px;font-family:var(--m);font-weight:600;color:#1A1A1A;line-height:1.15}
+.fe svg{width:34px;height:34px}
+.fe .fe-t{font-size:12px}
+.fe.big svg{width:clamp(64px,8vw,92px);height:clamp(64px,8vw,92px)}
+.fe.big .fe-t{font-size:clamp(17px,1.8vw,22px)}
+.cv-main{align-self:center;justify-self:end;text-align:right;display:flex;flex-direction:column;gap:16px;align-items:flex-end;position:relative;z-index:2}
+.cv-main h1{font-size:clamp(42px,6vw,84px);line-height:1;text-transform:uppercase;letter-spacing:-.01em;color:#0D2C66}
+.cv-sub{font-family:var(--m);font-weight:700;font-size:clamp(17px,1.8vw,22px);color:#1C5FC6}
+.cv-doc{display:flex;flex-direction:column;gap:4px;align-items:flex-end;margin-top:14px}
+.cv-doc span{font-family:var(--m);font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#3A8CEA}
+.cv-doc b{font-family:var(--m);font-weight:700;font-size:clamp(16px,1.6vw,20px);color:#0D2C66}
+.cv-deco{position:absolute;left:-4vw;bottom:-90px;width:min(420px,40vw);z-index:0;pointer-events:none}
+.cv-foot{justify-self:end;font-family:var(--m);font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#3A8CEA;position:relative;z-index:2}
+body.on-cover .hud-logos{visibility:hidden}
+#s-cover{padding-top:76px}
+.hud-logos{display:flex;align-items:center;gap:18px}
+.hud img{height:58px!important}
+/* Fotos */
+.photo,.holo{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line2);background:#FFFFFF;min-height:340px;display:flex;align-items:center;justify-content:center;padding:10px}
+.holo::after{display:none}
+.photo img,.holo>img{width:100%;height:100%;max-height:440px;object-fit:contain;border-radius:12px;display:block}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;height:100%;align-items:center}
+.duo img{width:100%;height:100%;max-height:430px;object-fit:contain;border-radius:12px}
+.duo.tight{grid-template-columns:1.6fr .7fr}
+.duo .amp{max-height:260px;object-fit:contain}
+.holo .cap{background:rgba(255,255,255,.9);padding:4px 8px;border-radius:6px;z-index:2}
+.fgrid{display:flex;flex-direction:column;gap:6px}
+.frow{display:grid;grid-template-columns:28px 92px minmax(0,1fr);gap:8px;align-items:center}
+.frow b{font-family:var(--h);font-size:22px;color:var(--ink)}
+.frow span{font-size:14px;color:var(--mut);font-weight:600}
+.frow .pick button{padding:5px 12px;font-size:14px}
+.nums button{min-width:44px}
+</style>
+<style>
+.ini{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:860px){.ini{grid-template-columns:1fr}}
+.sala-card{position:relative;border:2px solid var(--line2);border-radius:20px;background:#FFFFFF;padding:0;overflow:hidden;text-align:left;display:flex;flex-direction:column;transition:border-color .3s,box-shadow .3s,transform .25s var(--ease)}
+.sala-card:hover{transform:translateY(-2px)}
+.sala-card img{width:100%;height:190px;object-fit:cover;display:block}
+.sala-card .sc-b{padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.sala-card .sc-b b{font-family:var(--m);font-weight:800;font-size:13px;letter-spacing:.16em;color:var(--cy);text-transform:uppercase}
+.sala-card .sc-b span{font-family:var(--h);font-size:clamp(22px,2.4vw,30px);font-weight:600;color:var(--ink);line-height:1.1}
+.sala-card .sc-b small{color:var(--mut);font-size:15px}
+.sala-card[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 14px 34px rgba(13,44,102,.16)}
+.sala-card[aria-pressed="true"]::after{content:"✓";position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:var(--ink);color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800}
+.teamrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.teamrow button{border:1.5px solid var(--line2);background:#FFFFFF;border-radius:12px;padding:12px 20px;font-family:var(--m);font-weight:700;font-size:16px;color:var(--ink)}
+.teamrow button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#FFFFFF}
+.ini-bg{position:fixed;inset:0;z-index:0;background:url(img/sala.jpg) center/cover;filter:blur(14px) saturate(.9);opacity:0;transition:opacity .6s;transform:scale(1.1);pointer-events:none}
+body.on-ini .ini-bg{opacity:.22}
+.hudbtn{border:1.5px solid var(--ink)!important;background:var(--ink)!important;color:#FFFFFF!important;font-weight:800}
+.fsteps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.fst{border:1px solid var(--line2);border-radius:12px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;background:#FFFFFF}
+.fst b{font-family:var(--h);font-size:24px;color:var(--ink);line-height:1}
+.fst small{font-size:11px;color:var(--mut);font-weight:700;text-align:center;line-height:1.1;min-height:2.2em}
+.fst output{font-family:var(--h);font-size:30px;color:var(--cy);line-height:1}
+.fst div{display:flex;gap:4px}
+.fst button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line2);background:#F4F8FD;font-weight:800;color:var(--ink);padding:0}
+.mon2{width:100%;height:100%;display:flex;flex-direction:column;gap:10px;padding:8px}
+.mon2 .mg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.mon2 .mc{background:#0D2C66;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.mon2 .mc span{font-family:var(--m);font-weight:700;font-size:12px;letter-spacing:.1em;color:#9FB7DE;text-transform:uppercase}
+.mon2 .mc b{font-family:var(--h);font-size:clamp(26px,3vw,38px);color:#FFFFFF;line-height:1}
+.mon2 .mc.al b{color:#9CCBFF}
+.mon2 .note{border:1px solid var(--line2);border-radius:14px;padding:14px;color:var(--ink);font-weight:600;line-height:1.45;background:#F7FAFE}
+.mon2 .note b{display:block;font-family:var(--m);font-size:12px;letter-spacing:.12em;color:var(--mag);text-transform:uppercase;margin-bottom:4px}
+.ordl{display:flex;flex-direction:column;gap:6px}
+.ordl button{border:1px solid var(--line2);background:#FFFFFF;border-radius:10px;padding:9px 12px;text-align:left;font-size:15px;color:var(--ink)}
+.ordl button.no{border-color:var(--red);background:#FBE6E6;animation:shake .4s}
+.ordd{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.ordd li{background:#EAF1FB;border-radius:10px;padding:8px 12px;color:var(--ink);font-size:15px}
+.multi{display:flex;flex-direction:column;gap:6px}
+.multi button{border:1px solid var(--line2);background:#FFFFFF;border-radius:10px;padding:10px 12px;text-align:left;font-size:15px;color:var(--ink);display:flex;gap:10px;align-items:center}
+.multi button i{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line2);flex:none}
+.multi button[aria-pressed="true"]{border-color:var(--cy);background:#EEF4FC}
+.multi button[aria-pressed="true"] i{background:var(--cy);border-color:var(--cy)}
+.two.wide{grid-template-columns:minmax(0,.62fr) minmax(0,1.38fr)}
+.two.wide .holo{min-height:0}
+.two.wide .mon2 .mg{grid-template-columns:1fr 1fr}
+.two.wide .mon2 .mc b{font-size:26px}
+.two.wide .prob .q{font-size:19px}
+.ordl button,.multi button{padding:7px 11px;font-size:14px}
+.ordd li{padding:6px 10px;font-size:14px}
+.multi{gap:5px}
+
+.gal{display:grid;gap:8px;width:100%;height:100%}
+.gal img,.duo img,.oxi img,.holo>img,.photo img{cursor:zoom-in}
+.gal.g2{grid-template-columns:1fr 1fr}
+.gal.g3{grid-template-columns:1.3fr 1fr;grid-template-rows:1fr 1fr}
+.gal.g3 img:first-child{grid-row:1/3}
+.gal.g4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.gal.gv{grid-template-rows:auto auto;align-content:start}
+.gal.gh{grid-template-columns:.8fr 1.2fr;align-items:start}
+.gal img{width:100%;height:100%;max-height:420px;min-height:0;object-fit:contain;border-radius:12px;background:#F7FAFE}
+.gal.g4 img,.gal.g3 img{max-height:205px}
+.gal.g3 img:first-child{max-height:420px}
+.gal.gv img{max-height:190px}
+.gal.gh img{max-height:420px}
+.oxi{display:grid;grid-template-columns:1fr auto;gap:10px;width:100%;height:100%;align-items:stretch}
+.oxi img{width:100%;height:100%;max-height:430px;object-fit:cover;border-radius:12px}
+.oxi .amp{width:auto;height:430px;max-height:430px;object-fit:contain;background:#FFFFFF}
+.gal.gh .mon2 .mg,.gal.gv .mon2 .mg{grid-template-columns:repeat(3,minmax(0,1fr))}
+.gal.gh .mon2 .mg{grid-template-columns:1fr 1fr}
+.mon2 .mc{min-width:0}
+.mon2 .mc b{white-space:nowrap}
+.gal .mon2 .mc b{font-size:26px}
+.gal .mon2{padding:0}
+.lb{position:fixed;inset:0;z-index:40;background:rgba(13,44,102,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;cursor:zoom-out}
+.lb img{max-width:94vw;max-height:86vh;object-fit:contain;border-radius:12px;background:#FFFFFF}
+.lb span{font-family:var(--m);font-weight:700;font-size:13px;letter-spacing:.12em;color:#DCE9F9;text-transform:uppercase}
+
+.refs{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:10px;font-size:15px;line-height:1.5;color:var(--ink);max-width:100ch}
+
+.lcol{display:flex;flex-direction:column;gap:12px;min-width:0}
+.lcol h2{font-size:clamp(28px,3.4vw,46px)}
+.lcol .holo{flex:1}
+.slide{overflow:hidden!important;padding-top:78px!important;padding-bottom:72px!important}
+.hud{padding-top:10px!important;padding-bottom:6px!important}
+.hud img{height:48px!important}
+.holo{min-height:0!important}
+.photo,.holo{max-height:none}
+
+.grp-l{font-family:var(--m);font-weight:800;font-size:12px;letter-spacing:.14em;color:var(--cy);text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="room"></div><div class="grid"></div><div class="scan"></div><div class="ini-bg"></div>
+
+<header class="hud">
+  <div class="hud-logos"><img src="img/fucs.png" alt="Universidad FUCS"><span class="fe"><svg viewBox="0 0 60 60" aria-hidden="true"><rect x="2" y="2" width="56" height="56" rx="7" fill="#FFE11A" stroke="#1A1A1A" stroke-width="1.5"/><text x="11" y="36" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700" fill="#1A1A1A">Fe</text><circle cx="40" cy="14" r="2" fill="#1A1A1A"/><circle cx="46" cy="14" r="2" fill="#1A1A1A"/><rect x="11" y="45" width="12" height="2.5" fill="#1A1A1A"/><rect x="30" y="45" width="12" height="2.5" fill="#1A1A1A"/></svg><span class="fe-t">Facultad<br>de Enfermería</span></span></div>
+  <div class="hud-r">
+    <button class="chip hudbtn" id="homeBtn" type="button">INICIO</button>
+    <span class="chip" id="where" hidden></span>
+    <span class="chip">TIEMPO <span id="clock">00:00</span></span>
+    <button class="chip ghost" id="refBtn" type="button">REFERENCIAS</button>
+    <button class="chip ghost" id="fs" type="button" aria-label="Pantalla completa" title="Pantalla completa" style="padding:6px 9px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  </div>
+</header>
+
+<main class="deck" id="deck">
+  <section class="slide on" id="s-cover" aria-label="Portada">
+    <div class="cv">
+      <div class="cv-logos r" style="--i:0"><img src="img/fucs.png" alt="Universidad FUCS"><span class="fe big"><svg viewBox="0 0 60 60" aria-hidden="true"><rect x="2" y="2" width="56" height="56" rx="7" fill="#FFE11A" stroke="#1A1A1A" stroke-width="1.5"/><text x="11" y="36" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700" fill="#1A1A1A">Fe</text><circle cx="40" cy="14" r="2" fill="#1A1A1A"/><circle cx="46" cy="14" r="2" fill="#1A1A1A"/><rect x="11" y="45" width="12" height="2.5" fill="#1A1A1A"/><rect x="30" y="45" width="12" height="2.5" fill="#1A1A1A"/></svg><span class="fe-t">Facultad<br>de Enfermería</span></span></div>
+      <div class="cv-main">
+        <h1 class="r" style="--i:1">Simulación<br>materno-perinatal</h1>
+        <p class="cv-sub r" style="--i:2">Protocolo de atención del parto</p>
+        <div class="cv-doc r" style="--i:3"><span>Docentes</span><b>Angie Ojeda · Andrés Arango · Carolina Cuesta</b></div>
+      </div>
+      <svg class="cv-deco" viewBox="0 0 420 300" aria-hidden="true"><circle cx="150" cy="120" r="80" fill="none" stroke="#E6ECF5" stroke-width="2"/><circle cx="90" cy="300" r="170" fill="#F3F6FA"/><circle cx="60" cy="110" r="2.6" fill="#7C8AA3"/><circle cx="94" cy="110" r="2.6" fill="#7C8AA3"/><circle cx="128" cy="110" r="2.6" fill="#7C8AA3"/><circle cx="60" cy="144" r="2.6" fill="#7C8AA3"/><circle cx="94" cy="144" r="2.6" fill="#7C8AA3"/><circle cx="128" cy="144" r="2.6" fill="#7C8AA3"/><circle cx="162" cy="144" r="2.6" fill="#7C8AA3"/><circle cx="60" cy="178" r="2.6" fill="#7C8AA3"/><circle cx="94" cy="178" r="2.6" fill="#7C8AA3"/><circle cx="128" cy="178" r="2.6" fill="#7C8AA3"/><circle cx="60" cy="212" r="2.6" fill="#7C8AA3"/><circle cx="94" cy="212" r="2.6" fill="#7C8AA3"/><circle cx="128" cy="212" r="2.6" fill="#7C8AA3"/><circle cx="162" cy="212" r="2.6" fill="#7C8AA3"/><path d="M150 285 l30 -30 l30 30 M210 285 l30 -30 l30 30" fill="none" stroke="#BFD3F2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </section>
+
+  <section class="slide" id="s-ini" aria-label="Inicio">
+    <div class="in">
+      <h2 class="r" style="--i:0">¿En qué sala están?</h2>
+      <div class="ini r" style="--i:1">
+        <button class="sala-card" type="button" data-sala="1" aria-pressed="false"><img src="img/recepcion.jpg" alt=""><span class="sc-b"><b>Sala 1</b><span>Trabajo de parto normal</span><small>Camila · 39 + 2 semanas</small></span></button>
+        <button class="sala-card" type="button" data-sala="2" aria-pressed="false"><img src="img/simulador.jpg" alt=""><span class="sc-b"><b>Sala 2</b><span>Parto anormal: embarazo ectópico</span><small>Daniela · 7 semanas de amenorrea</small></span></button>
+      </div>
+      <div class="panel r" style="--i:2;display:flex;flex-direction:column;gap:14px">
+        <span class="grp-l">Equipo</span>
+        <div class="teamrow"><div class="teamrow" id="teamPick"></div><span class="msg" id="iniMsg"></span><button class="btn mag" type="button" id="goBtn" style="margin-left:auto;padding:14px 34px;font-size:17px;color:#FFFFFF;background:#0D2C66;border-color:#0D2C66">Iniciar</button></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="lb" id="lb" hidden><img alt=""><span>Toque para cerrar</span></div>
+<div class="unlock" id="unlock"><div>FASE SUPERADA</div></div>
+
+<nav class="nav">
+  <button id="prev" type="button" aria-label="Anterior"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <div class="bar"><span id="bar"></span></div>
+  <span class="cnt" id="cnt"></span>
+  <button id="next" type="button" aria-label="Siguiente"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+</nav>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let ax=null;
+function ac(){ try{ if(!ax) ax=new (window.AudioContext||window.webkitAudioContext)(); if(ax.state==='suspended') ax.resume(); }catch(e){ ax=null; } return ax; }
+function tone(f,d,t,v,w){ const c=ac(); if(!c) return; const s=c.currentTime+(w||0), o=c.createOscillator(), g=c.createGain(); o.type=t||'sine'; o.frequency.setValueAtTime(f,s); g.gain.setValueAtTime(.0001,s); g.gain.exponentialRampToValueAtTime(v||.15,s+.02); g.gain.exponentialRampToValueAtTime(.0001,s+d); o.connect(g).connect(c.destination); o.start(s); o.stop(s+d+.05); }
+const okSnd=()=>{ tone(660,.12,'triangle',.15); tone(990,.18,'triangle',.15,.1); tone(1320,.3,'triangle',.12,.2); };
+const noSnd=()=>tone(180,.3,'sawtooth',.1);
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+
+const MON=(cells,note)=>`<div class="mon2"><div class="mg">${cells.map(c=>`<div class="mc${c[2]?' al':''}"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('')}</div>${note?`<div class="note"><b>Lo que encuentran</b>${note}</div>`:''}</div>`;
+
+const M={
+ 1:{name:'Sala 1 · Trabajo de parto normal', patient:'Camila',
+  tx:'Camila, 27 años, 39 + 2 semanas.\nSegundo embarazo: un parto vaginal previo, hijo vivo.\nContracciones cada 2 minutos.\n«Siento que ya va a nacer».\nObjetivo: madre y bebé estables al final de la primera hora.',
+  photo:'img/simu2.jpg',
+  ph:[
+   {n:'Dilatación',tag:'Fase 01 · Ingreso a sala',cap:'Dilatación cervical',vis:`<div class="gal g2"><img src="img/dilatacion.jpg" alt="Dilatación cervical de 0 a 10 cm"><img src="img/simu2.jpg" alt="Simulador de parto" style="object-fit:cover"></div>`,
+    q:'Anamnesis: este es su segundo embarazo. El primero terminó en un parto vaginal hace 3 años y su hijo está vivo y sano. No ha tenido abortos, cesáreas, ectópicos ni mortinatos. Armen su fórmula obstétrica.',
+    data:[['Edad gestacional','39 + 2 semanas'],['Tacto','10 cm, borramiento 100 %, estación +2'],['Membranas','Rotas hace 2 h, líquido claro'],['FCF','138 lpm']],
+    type:'formula',ans:[2,1,0,0,0,0,1]},
+   {n:'Expulsivo',tag:'Fase 02 · Coronación',cap:'Maniobras en el expulsivo',vis:`<div class="gal g4"><img src="img/perine.jpg" alt="Protección del periné" style="object-fit:cover"><img src="img/cabeza.jpg" alt="Salida de la cabeza" style="object-fit:cover"><img src="img/rotacion.jpg" alt="Rotación externa"><img src="img/maniobras.jpg" alt="Maniobras en el expulsivo"></div>`,
+    q:'La cabeza corona con el pujo. ¿Qué hace la mano de quien atiende el parto?',
+    data:[['PA','124/80'],['FC materna','102 lpm'],['FCF entre pujos','128 lpm'],['Contracciones','Cada 2 min, 60 s']],
+    type:'opts',opts:[['Tracciona suave la cabeza para acelerar la salida',0],['Controla la salida con la palma y protege el periné, sin traccionar',1],['Pide un pujo fuerte y sostenido hasta que salga la cabeza',0],['Indica presión sobre el fondo uterino',0]]},
+   {n:'Recepción',tag:'Fase 03 · Recién nacido',cap:'Test de Apgar · piel con piel',vis:`<div class="duo"><img src="img/apgar.jpg" alt="Test de Apgar"><img src="img/piel.jpg" alt="Recién nacido piel con piel" style="object-fit:cover"></div>`,
+    q:'El bebé está sobre el pecho de Camila. ¿Cuál es su Apgar al minuto 1?',
+    data:[['Frecuencia cardíaca','140 lpm'],['Respiración','Llanto vigoroso'],['Tono','Alguna flexión de extremidades'],['Irritabilidad','Llora al estímulo'],['Color','Cuerpo rosado, manos y pies azulados']],
+    type:'num',ans:8},
+   {n:'Pinzamiento',tag:'Fase 04 · Cordón umbilical',cap:'Cordón umbilical y pinzas',vis:`<div class="gal g3"><img src="img/pinz2.jpg" alt="Pinzamiento del cordón piel con piel" style="object-fit:cover"><img src="img/pinzamiento.jpg" alt="Pinzas en el cordón umbilical" style="object-fit:cover"><img src="img/kit.jpg" alt="Kit con pinzas de cordón"></div>`,
+    q:'El bebé está vigoroso. Muevan el reloj hasta el momento en que pinzarían el cordón.',
+    data:[['Bebé','Vigoroso, piel con piel'],['Cordón','Late'],['Madre','Estable']],
+    type:'range',min:60,max:180},
+   {n:'Alumbramiento',tag:'Fase 05 · Placenta',cap:'Placenta y oxitocina',vis:`<div class="oxi"><img src="img/placenta.jpg" alt="Placenta y cordón umbilical"><img src="img/oxitocina.jpg" alt="Ampolla de oxitocina 10 UI" class="amp"></div>`,
+    q:'Ya nació el bebé. ¿Qué dosis y qué vía de oxitocina se usan para el manejo activo del alumbramiento?',
+    data:[['Hora del nacimiento','02:41'],['Signos de desprendimiento','El cordón se alarga, sale un chorro de sangre'],['Útero','Se eleva y se pone globuloso']],
+    type:'pick',groups:[['Dosis',['5 UI','10 UI','20 UI'],'10 UI'],['Vía',['IM','IV en bolo','Subcutánea'],'IM']]},
+   {n:'Posparto',tag:'Fase 06 · Primera hora',cap:'Vigilancia del posparto',vis:`<img src="img/posparto.jpg" alt="Toma de presión arterial en el posparto" style="object-fit:cover">`,
+    q:'Placenta completa a los 8 minutos. ¿Qué hace el equipo en la primera hora?',
+    data:[['PA','112/70'],['FC','88 lpm'],['Útero','Firme, bajo el ombligo'],['Sangrado','Moderado']],
+    type:'opts',opts:[['Pasarla a la habitación y revisarla en 4 horas',0],['Vigilar tono, sangrado, PA y FC cada 15 minutos y apoyar la lactancia',1],['Masaje uterino continuo, aunque el útero esté firme',0],['Llevarse al bebé a la cuna para que la madre descanse',0]]}
+  ]},
+ 2:{name:'Sala 2 · Embarazo ectópico', patient:'Daniela',
+  tx:'Daniela, 29 años, 7 semanas de amenorrea.\nAntecedentes: un parto vaginal (hijo vivo) y un aborto espontáneo.\nDolor súbito en la fosa ilíaca derecha, irradiado al hombro.\nMareo y sangrado vaginal escaso.\nObjetivo: estabilizarla y dejarla lista para quirófano.',
+  photo:'img/mesa.jpg',
+  ph:[
+   {n:'Ingreso',tag:'Fase 01 · Ingreso a urgencias',cap:'Signos al ingreso',vis:MON([['PA','86/54',1],['FC','122',1],['FR','24',1],['T °C','36,1'],['SatO₂','95 %'],['Dolor','8/10',1]],'Pálida, fría, sudorosa. Llenado capilar de 3 segundos.'),
+    q:'Anamnesis: embarazo actual de 7 semanas. Tiene un hijo de 5 años nacido por parto vaginal y tuvo un aborto espontáneo a las 9 semanas hace 2 años. No ha tenido cesáreas, ectópicos previos ni mortinatos. Armen su fórmula obstétrica.',
+    data:[['FUM','Hace 7 semanas'],['Alergias','Pregunten']],
+    type:'formula',ans:[3,1,1,0,0,0,1]},
+   {n:'Valoración',tag:'Fase 02 · ¿Qué le pasa?',cap:'Localizaciones del embarazo ectópico',vis:`<div class="gal gv"><img src="img/ectopico.jpg" alt="Localizaciones del embarazo ectópico">${MON([['PA','86/54',1],['FC','122',1],['FR','24',1],['T °C','36,1'],['Hemoglobina','9,1 g/dl',1],['Grupo','O +']],'Prueba de embarazo en sangre (β-hCG) positiva: 4800 mUI/ml. Ecografía: sin saco dentro del útero y con líquido libre abundante en el abdomen.')}</div>`,
+    q:'Con los signos y los resultados, ¿qué le está pasando a Daniela?',
+    data:[['Dolor','Súbito, irradiado al hombro'],['Abdomen','Distendido y doloroso'],['Sangrado vaginal','Escaso']],
+    type:'opts',opts:[['Amenaza de aborto, hemodinámicamente estable',0],['Embarazo ectópico roto con choque hipovolémico',1],['Infección urinaria con dolor referido',0],['Apendicitis sin compromiso hemodinámico',0]]},
+   {n:'Accesos',tag:'Fase 03 · Primeras acciones',cap:'Monitor',vis:MON([['PA','86/54',1],['FC','122',1],['FR','24',1],['T °C','36,0'],['SatO₂','95 %'],['Dolor','8/10',1]],'Sigue pálida y fría. El ginecólogo indica cirugía urgente.'),
+    q:'¿Cuántos accesos venosos canalizan y qué líquido inician mientras se prepara el quirófano?',
+    data:[['Oxígeno','Pregunten si ya está'],['Posición','Supina']],
+    type:'pick',groups:[['Accesos venosos de 16 a 18 G',['1','2'],'2'],['Líquido',['Dextrosa al 5 %','Cristaloide tibio en bolo'],'Cristaloide tibio en bolo']]},
+   {n:'Sonda vesical',tag:'Fase 04 · Dispositivos',cap:'Tras 1000 ml',vis:MON([['PA','96/60'],['FC','110',1],['FR','22',1],['T °C','36,0'],['SatO₂','97 %'],['Dolor','7/10',1]],'Mejora un poco tras 1000 ml. Falta la sonda vesical para medir la diuresis.'),
+    q:'Pongan los pasos de la sonda vesical en orden. Si se equivocan, la tarjeta se pone roja.',
+    data:[['Alergias','Pregunten antes de empezar'],['Sonda','14 a 16 Fr']],
+    type:'order',steps:['Verificar la indicación, explicar y preguntar alergias (látex)','Higiene de manos y preparar el material','Posición supina con piernas flexionadas y aseo genital','Guantes estériles y campo','Separar los labios, limpiar e introducir hasta que salga orina, y 2 a 3 cm más','Inflar el balón, retraer suave y conectar el sistema cerrado','Fijar al muslo, bolsa bajo la vejiga y registrar']},
+   {n:'Prequirúrgico',tag:'Fase 05 · Lista para quirófano',cap:'Hallazgos quirúrgicos de referencia',vis:`<div class="gal gv">${MON([['PA','98/62'],['FC','106',1],['FR','20'],['T °C','36,3'],['SatO₂','98 %'],['Orina','20 ml']],'')}<img src="img/cirugia.jpg" alt="Hallazgos quirúrgicos de un embarazo ectópico"></div>`,
+    q:'Marquen todo lo que debe estar listo antes de que Daniela salga a quirófano, y nada más.',
+    data:[['Consentimiento','Pregunten'],['Última comida','Pregunten']],
+    type:'multi',items:[['Consentimiento informado firmado',1],['Retiro de joyas, prótesis y esmalte',1],['Ayuno verificado',1],['Pruebas cruzadas y reserva de sangre',1],['Alergias registradas en la manilla',1],['Darle líquidos por boca para que no se deshidrate',0],['Tricotomía con cuchilla',0],['Retirar la sonda vesical antes de salir',0]]},
+   {n:'Entrega',tag:'Fase 06 · Traslado',cap:'Lista para quirófano',vis:`<div class="gal gh"><img src="img/mesa.jpg" alt="Paciente en la mesa quirúrgica" style="object-fit:cover">${MON([['PA','98/62'],['FC','106',1],['FR','20'],['T °C','36,3'],['SatO₂','98 %'],['Orina','20 ml']],'Dos vías, sonda con 20 ml, consentimiento firmado.')}</div>`,
+    q:'Llega el equipo de quirófano. ¿Cuál es la mejor entrega?',
+    data:[['Hora','03:25']],
+    type:'opts',opts:[['«Es la paciente del ectópico, ya está lista»',0],['«Daniela, 29 años, ectópico roto con choque. PA 98/62 tras 1000 ml. Dos vías, sonda con 20 ml, pruebas cruzadas enviadas. Necesita quirófano ya»',1],['«Les dejo la historia clínica, ahí está todo»',0],['«Está mejor, pero no sé qué le van a hacer»',0]]}
+  ]}
+};
+
+/* Construir diapositivas */
+const deck=$('#deck');
+function phaseHTML(p,i,s){
+  let t='';
+  if(p.type==='formula') t=`<div class="fsteps">${[['G','Gestas'],['P','Partos'],['A','Abortos'],['C','Cesáreas'],['E','Ectópicos'],['M','Mortinatos'],['V','Vivos']].map((x,k)=>`<div class="fst" data-f="${k}"><b>${x[0]}</b><small>${x[1]}</small><output>0</output><div><button type="button" data-d="-1" aria-label="Menos">−</button><button type="button" data-d="1" aria-label="Más">+</button></div></div>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
+  if(p.type==='opts') t=`<div class="opts">${p.opts.map((o,k)=>`<button type="button" data-o="${k}">${o[0]}</button>`).join('')}</div>`;
+  if(p.type==='num') t=`<div class="pick nums">${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<button type="button" aria-pressed="false" data-n="${n}">${n}</button>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
+  if(p.type==='range') t=`<div class="range"><div class="big" data-rv>00:00</div><input type="range" min="0" max="300" step="15" value="0" aria-label="Minutos desde el nacimiento" data-r><div class="row"><button class="btn" type="button" data-try>Pinzar aquí</button><span class="hint">0 a 5 minutos desde el nacimiento</span></div></div>`;
+  if(p.type==='pick') t=`<div class="range">${p.groups.map((g,k)=>`<span class="grp-l">${g[0]}</span><div class="pick" data-g="${k}">${g[1].map(x=>`<button type="button" aria-pressed="false">${x}</button>`).join('')}</div>`).join('')}<div class="row"><button class="btn" type="button" data-try>Verificar</button></div></div>`;
+  if(p.type==='order') t=`<div class="two" style="gap:12px"><div class="ordl" data-pool></div><ol class="ordd" data-done></ol></div>`;
+  if(p.type==='multi') t=`<div class="multi">${p.items.map((x,k)=>`<button type="button" aria-pressed="false" data-m="${k}"><i></i>${x[0]}</button>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
+  const wide=(p.type==='order'||p.type==='multi');
+  return `<div class="in">
+   <div class="two${wide?' wide':''}"><div class="lcol"><h2 class="r" style="--i:0">${i+1}. ${p.n}</h2><div class="holo r" style="--i:1">${p.vis}<span class="cap">${p.cap}</span></div></div>
+   <div class="panel prob r" style="--i:2"><span class="tag mag">Problema</span><p class="q">${p.q}</p><span class="tag">Datos que pueden pedir</span>
+   <div class="data">${p.data.map(d=>`<button type="button" data-d="${esc(d[1])}"><b>${d[0]}</b>tocar para ver</button>`).join('')}</div>${t}<p class="msg" data-msg></p></div></div></div>`;
+}
+const state={sala:null,team:null};
+const done={1:[0,0,0,0,0,0],2:[0,0,0,0,0,0]};
+const results={1:[],2:[]};
+for(const s of [1,2]){
+  const m=M[s];
+  deck.insertAdjacentHTML('beforeend',`<section class="slide" id="b${s}" data-s="${s}" aria-label="El caso"><div class="in"><span class="tag r" style="--i:0">${m.name}</span><h2 class="r" style="--i:0">El caso</h2><div class="two"><div style="display:flex;flex-direction:column;gap:18px"><div class="panel r" style="--i:1"><div class="tx" data-tx></div></div><div class="rules r" style="--i:2;grid-template-columns:1fr"><div class="rule"><b>01 · CADA FASE SE ABRE AL RESOLVERLA</b><p>El equipo responde el problema de cada fase para pasar a la siguiente.</p></div><div class="rule"><b>02 · LOS DATOS SE PIDEN</b><p>Tocan el dato que necesitan y el docente lo confirma en el simulador.</p></div></div></div><div class="photo r" style="--i:2"><img src="${m.photo}" alt="Simulación con estudiantes de enfermería" style="object-fit:cover"></div></div><div class="row r" style="--i:3"><button class="btn mag" type="button" data-route="${s}">Ver la ruta</button></div></div></section>`);
+  deck.insertAdjacentHTML('beforeend',`<section class="slide" id="m${s}" data-s="${s}" aria-label="Ruta"><div class="in"><div class="phase-head r" style="--i:0"><div><span class="tag">${m.name}</span><h2>Ruta de atención</h2></div></div><div class="map panel r" style="--i:1"><svg viewBox="0 0 1100 300" data-map role="img" aria-label="Ruta de seis fases"></svg></div><p class="hint r" style="--i:2">Toquen una fase abierta para entrar. Las cumplidas se encienden en verde.</p></div></section>`);
+  m.ph.forEach((p,i)=>deck.insertAdjacentHTML('beforeend',`<section class="slide phase" id="p${s}-${i}" data-s="${s}" data-p="${i}" aria-label="Fase ${i+1}">${phaseHTML(p,i,s)}</section>`));
+  deck.insertAdjacentHTML('beforeend',`<section class="slide" id="e${s}" data-s="${s}" aria-label="Atención completa"><div class="in"><span class="tag" style="color:var(--lime)">${m.name}</span><h2><span class="glow">Atención completa</span></h2><div class="two"><div class="panel"><span class="tag">Tabla de tiempos</span><div class="board" data-board style="margin-top:14px"></div><div class="row" style="margin-top:14px"><button class="btn sm" type="button" data-home>Volver al inicio</button></div></div><div class="panel"><span class="tag mag">Antes de salir de la sala</span><div class="deb" data-deb style="margin-top:14px;grid-template-columns:repeat(2,minmax(0,1fr))"></div></div></div></div></section>`);
+}
+
+deck.insertAdjacentHTML('beforeend',`<section class="slide" id="s-refs" aria-label="Referencias"><div class="in"><h2 class="r" style="--i:0">Referencias</h2><ol class="refs r" style="--i:1"><li>Organización Mundial de la Salud. Recomendaciones de la OMS: cuidados durante el parto para una experiencia de parto positiva. Ginebra: OMS; 2018.</li><li>Cunningham FG, Leveno KJ, Dashe JS, Hoffman BL, Spong CY, Casey BM. Trabajo de parto normal. En: Williams Obstetricia. 26.ª ed. México: Editorial Médica Panamericana; 2022. p. 409-33.</li><li>American Academy of Pediatrics Committee on Fetus and Newborn, American College of Obstetricians and Gynecologists Committee on Obstetric Practice. The Apgar score. Pediatrics. 2015;136(4):819-22.</li><li>Weiner GM, editor. Textbook of neonatal resuscitation. 8th ed. Itasca (IL): American Academy of Pediatrics; 2021.</li><li>World Health Organization. Guideline: delayed umbilical cord clamping for improved maternal and infant health and nutrition outcomes. Geneva: WHO; 2014.</li><li>Ministerio de Salud y Protección Social, Colciencias. Guía de práctica clínica para la prevención, detección temprana y tratamiento de las complicaciones del embarazo, parto o puerperio. Bogotá: MinSalud; 2013.</li><li>American College of Obstetricians and Gynecologists. ACOG Practice Bulletin No. 193: tubal ectopic pregnancy. Obstet Gynecol. 2018;131(3):e91-103.</li><li>World Health Organization. WHO guidelines for safe surgery 2009: safe surgery saves lives. Geneva: WHO; 2009.</li><li>Gould CV, Umscheid CA, Agarwal RK, Kuntz G, Pegues DA; Healthcare Infection Control Practices Advisory Committee. Guideline for prevention of catheter-associated urinary tract infections 2009. Atlanta: CDC; 2009.</li></ol></div></section>`);
+/* Lógica de cada fase */
+function wireAll(){
+  $$('.phase').forEach(sec=>{
+    const s=+sec.dataset.s, i=+sec.dataset.p, p=M[s].ph[i], msg=$('[data-msg]',sec);
+    $$('[data-d]:not([data-d="-1"]):not([data-d="1"])',sec).forEach(b=>b.addEventListener('click',()=>{ if(b.classList.contains('shown')) return; b.classList.add('shown'); b.lastChild.textContent=b.dataset.d; tone(1200,.05,'square',.04); }));
+    const win=()=>{ done[s][i]=1; msg.className='msg ok'; msg.textContent='Correcto. Fase '+(i+1)+' superada.'; okSnd(); const u=$('#unlock'); $('div',u).textContent=i===5?'ATENCIÓN COMPLETA':'FASE SUPERADA'; u.classList.remove('on'); void u.offsetWidth; u.classList.add('on'); drawMap(s); setTimeout(()=>{ if(i===5){ finish(s); goId('e'+s); } else goId('p'+s+'-'+(i+1)); }, reduce?100:1600); };
+    const fail=t=>{ msg.className='msg no'; msg.textContent=t; noSnd(); };
+    if(p.type==='formula'){ $$('.fst',sec).forEach(f=>$$('button',f).forEach(b=>b.addEventListener('click',()=>{ const o=$('output',f); o.textContent=Math.max(0,Math.min(9,+o.textContent+ +b.dataset.d)); tone(900,.04,'square',.04); }))); $('[data-try]',sec).addEventListener('click',()=>{ const v=$$('.fst output',sec).map(o=>+o.textContent); const bad=v.map((x,k)=>x!==p.ans[k]?k:-1).filter(k=>k>=0); if(!bad.length) win(); else fail('Revisen: '+bad.map(k=>'GPACEMV'[k]).join(', ')+'.'); }); }
+    if(p.type==='opts') $$('[data-o]',sec).forEach(b=>b.addEventListener('click',()=>{ if(p.opts[+b.dataset.o][1]){ b.classList.add('ok'); win(); } else { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); fail('No. Discútanlo y vuelvan a intentar.'); } }));
+    if(p.type==='num'){ $$('.nums button',sec).forEach(b=>b.addEventListener('click',()=>$$('.nums button',sec).forEach(x=>x.setAttribute('aria-pressed',String(x===b))))); $('[data-try]',sec).addEventListener('click',()=>{ const b=$('.nums [aria-pressed="true"]',sec); if(!b) return fail('Elijan un puntaje.'); if(+b.dataset.n===p.ans) win(); else fail('No es ese puntaje. Revisen cada signo.'); }); }
+    if(p.type==='range'){ const r=$('[data-r]',sec), v=$('[data-rv]',sec); const show=()=>{ const t=+r.value; v.textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0'); }; r.addEventListener('input',show); show(); $('[data-try]',sec).addEventListener('click',()=>{ const t=+r.value; if(t>=p.min&&t<=p.max) win(); else fail(t<p.min?'Muy pronto: el bebé está vigoroso.':'Demasiado tarde para lo recomendado.'); }); }
+    if(p.type==='pick'){ $$('[data-g]',sec).forEach(g=>$$('button',g).forEach(b=>b.addEventListener('click',()=>$$('button',g).forEach(x=>x.setAttribute('aria-pressed',String(x===b)))))); $('[data-try]',sec).addEventListener('click',()=>{ const sel=$$('[data-g]',sec).map(g=>{ const b=$('[aria-pressed="true"]',g); return b?b.textContent:null; }); if(sel.includes(null)) return fail('Falta elegir una opción.'); const bad=p.groups.filter((g,k)=>sel[k]!==g[2]).map(g=>g[0].toLowerCase()); if(!bad.length) win(); else fail('Revisen: '+bad.join(', ')+'.'); }); }
+    if(p.type==='multi'){ $$('[data-m]',sec).forEach(b=>b.addEventListener('click',()=>b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true')))); $('[data-try]',sec).addEventListener('click',()=>{ const sel=$$('[data-m]',sec).map(b=>b.getAttribute('aria-pressed')==='true'?1:0); const miss=p.items.filter((x,k)=>x[1]&&!sel[k]).length, extra=p.items.filter((x,k)=>!x[1]&&sel[k]).length; if(!miss&&!extra) win(); else fail((miss?'Falta '+miss+' punto'+(miss>1?'s':'')+'. ':'')+(extra?'Sobra '+extra+'.':'')); }); }
+    if(p.type==='order') sec._resetOrder=()=>{ let n=0; const pool=$('[data-pool]',sec), dn=$('[data-done]',sec); dn.innerHTML=''; const idx=[...p.steps.keys()].sort(()=>Math.random()-.5); pool.innerHTML=idx.map(k=>`<button type="button" data-k="${k}">${p.steps[k]}</button>`).join(''); $$('button',pool).forEach(b=>b.addEventListener('click',()=>{ if(+b.dataset.k===n){ const li=document.createElement('li'); li.textContent=p.steps[n]; dn.appendChild(li); b.remove(); n++; tone(880,.12,'triangle',.12); if(n===p.steps.length) win(); } else { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); fail('Ese no es el siguiente paso.'); } })); };
+    if(sec._resetOrder) sec._resetOrder();
+  });
+  $$('[data-route]').forEach(b=>b.addEventListener('click',()=>goId('m'+b.dataset.route)));
+  $$('[data-home]').forEach(b=>b.addEventListener('click',()=>goId('s-ini')));
+  const DEB=[['01','¿Qué sintieron?','Reacciones del equipo y de los observadores.'],['02','¿Qué pasó?','La historia de la paciente en una frase.'],['03','¿Por qué decidieron así?','Lo que vieron los observadores y lo que harían diferente.'],['04','¿Qué se llevan?','Una acción de enfermería para la práctica real.']];
+  $$('[data-deb]').forEach(d=>{ d.innerHTML=DEB.map(x=>`<button type="button" aria-expanded="false"><b>${x[0]}</b><span>${x[1]}</span><small>${x[2]}</small></button>`).join(''); $$('button',d).forEach(b=>b.addEventListener('click',()=>b.setAttribute('aria-expanded',String(b.getAttribute('aria-expanded')!=='true')))); });
+}
+function resetSala(s){
+  done[s].fill(0);
+  $$('.phase[data-s="'+s+'"]').forEach(sec=>{
+    $$('.data button',sec).forEach(b=>{ b.classList.remove('shown'); b.lastChild.textContent='tocar para ver'; });
+    $$('.opts button',sec).forEach(b=>b.classList.remove('ok','no'));
+    $$('.pick button,.multi button',sec).forEach(b=>b.setAttribute('aria-pressed','false'));
+    $$('.fst output',sec).forEach(o=>o.textContent='0');
+    const r=$('[data-r]',sec); if(r){ r.value=0; r.dispatchEvent(new Event('input')); }
+    const m=$('[data-msg]',sec); m.textContent=''; m.className='msg';
+    if(sec._resetOrder) sec._resetOrder();
+  });
+  drawMap(s);
+}
+
+/* Mapa */
+const NX=[90,270,450,630,810,990];
+function drawMap(s){
+  const svg=$('#m'+s+' [data-map]'), d=done[s]; let h='';
+  for(let k=0;k<5;k++) h+=`<path class="path${d[k]?' lit':''}" d="M${NX[k]+40} ${k%2?190:110} C${NX[k]+90} ${k%2?190:110} ${NX[k+1]-90} ${k%2?110:190} ${NX[k+1]-40} ${k%2?110:190}"/>`;
+  M[s].ph.forEach((p,k)=>{ const y=k%2?190:110, open=k===0||d[k-1]; h+=`<g class="node${d[k]?' done':open?' open':''}" data-k="${k}" tabindex="0" role="button" aria-label="Fase ${k+1}: ${p.n}"><circle class="ring" cx="${NX[k]}" cy="${y}" r="40"/><text class="num" x="${NX[k]}" y="${y-4}" text-anchor="middle">0${k+1}</text><path class="lock" d="M${NX[k]-7} ${y+6} h14 v12 h-14z M${NX[k]-4} ${y+6} v-4 a4 4 0 0 1 8 0 v4" fill="none" stroke="#9AABC4" stroke-width="2"/>${d[k]?`<path d="M${NX[k]-9} ${y+10} l6 6 l12 -12" fill="none" stroke="#1C5FC6" stroke-width="3" stroke-linecap="round"/>`:''}<text x="${NX[k]}" y="${y+(k%2?66:-56)}" text-anchor="middle">${p.n}</text></g>`; });
+  svg.innerHTML=h;
+  $$('.node',svg).forEach(n=>{ const g=()=>{ const k=+n.dataset.k; if(k===0||d[k-1]) goId('p'+s+'-'+k); else noSnd(); }; n.addEventListener('click',g); n.addEventListener('keydown',e=>{ if(e.key==='Enter') g(); }); });
+}
+
+/* Reloj y tiempos */
+let t0=null, tick=null, elapsed=0;
+const fmt=t=>String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+function startClock(){ clearInterval(tick); t0=Date.now(); elapsed=0; $('#clock').textContent='00:00'; tick=setInterval(()=>{ elapsed=Math.floor((Date.now()-t0)/1000); $('#clock').textContent=fmt(elapsed); },1000); }
+function finish(s){ clearInterval(tick); results[s].push(['Equipo '+state.team,elapsed]); results[s].sort((a,b)=>a[1]-b[1]); $('#e'+s+' [data-board]').innerHTML=results[s].map((r,i)=>`<div><b>${i+1}</b><span>${r[0]}</span><span>${fmt(r[1])}</span></div>`).join(''); }
+
+/* Inicio */
+$('#teamPick').innerHTML=[1,2,3,4].map(n=>`<button type="button" aria-pressed="false" data-t="${n}">Equipo ${n}</button>`).join('');
+$$('.sala-card').forEach(c=>c.addEventListener('click',()=>{ $$('.sala-card').forEach(x=>x.setAttribute('aria-pressed',String(x===c))); state.selSala=+c.dataset.sala; tone(900,.06,'triangle',.08); }));
+$$('#teamPick button').forEach(b=>b.addEventListener('click',()=>{ $$('#teamPick button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); state.selTeam=+b.dataset.t; tone(900,.06,'triangle',.08); }));
+$('#goBtn').addEventListener('click',()=>{
+  if(!state.selSala||!state.selTeam){ $('#iniMsg').className='msg no'; $('#iniMsg').textContent='Elijan sala y equipo.'; noSnd(); return; }
+  $('#iniMsg').textContent='';
+  state.sala=state.selSala; state.team=state.selTeam; resetSala(state.sala);
+  const w=$('#where'); w.hidden=false; w.textContent='SALA '+state.sala+' · EQUIPO '+state.team;
+  ac(); okSnd(); startClock(); refreshList(); goId('b'+state.sala);
+});
+$('#homeBtn').addEventListener('click',()=>goId('s-ini'));
+$('#refBtn').addEventListener('click',()=>goId('s-refs'));
+
+/* Texto del caso */
+let txT=null;
+function typeTx(el,text){ clearInterval(txT); let k=0; if(reduce){ el.textContent=text; return; } el.innerHTML=''; txT=setInterval(()=>{ k++; el.textContent=text.slice(0,k); const c=document.createElement('span'); c.className='cur'; el.appendChild(c); if(k>=text.length) clearInterval(txT); },26); }
+
+/* Navegación */
+let list=[], cur=0;
+function fit(){ const sl=list[cur]; if(!sl) return; const inn=sl.querySelector(':scope > .in, :scope > .cv'); if(!inn) return; inn.style.zoom=1; const cs=getComputedStyle(sl); const avH=sl.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom); const avW=sl.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight); const z=Math.min(1,avH/inn.scrollHeight,avW/inn.scrollWidth); if(z<1) inn.style.zoom=Math.max(.5,z-0.01); }
+window.addEventListener('resize',fit);
+document.addEventListener('click',()=>setTimeout(fit,60));
+$$('img').forEach(im=>im.addEventListener('load',()=>fit()));
+
+function refreshList(){ list=$$('.slide').filter(sl=>!sl.dataset.s||+sl.dataset.s===state.sala); }
+function go(n){
+  n=Math.max(0,Math.min(list.length-1,n)); const sl=list[n], prev=list[cur]; cur=n;
+  $$('.slide').forEach(x=>x.classList.toggle('on',x===sl));
+  document.body.classList.toggle('on-cover',sl.id==='s-cover'); document.body.classList.toggle('on-ini',sl.id==='s-ini');
+  $('#bar').style.width=((n+1)/list.length*100)+'%'; $('#cnt').textContent=(n+1)+' / '+list.length;
+  $('#prev').disabled=n===0; $('#next').disabled=n===list.length-1; sl.scrollTop=0;
+  if(sl.id.startsWith('b')&&sl!==prev){ const s=+sl.dataset.s; typeTx($('[data-tx]',sl),M[s].tx); }
+  try{ history.replaceState(null,'','#'+sl.id); }catch(e){}
+  requestAnimationFrame(fit); setTimeout(fit,300);
+}
+function goId(id){ const i=list.findIndex(x=>x.id===id); if(i>=0) go(i); }
+$('#prev').addEventListener('click',()=>go(cur-1)); $('#next').addEventListener('click',()=>go(cur+1));
+document.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; if(e.key==='ArrowRight'||e.key==='PageDown'){ e.preventDefault(); go(cur+1); } if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); } });
+$('#fs').addEventListener('click',()=>{ const d=document.documentElement; if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); else if(d.requestFullscreen) d.requestFullscreen().catch(()=>{}); });
+
+document.addEventListener('click',e=>{ const im=e.target.closest('.holo img,.photo img'); if(im){ const lb=$('#lb'); $('img',lb).src=im.src; $('img',lb).alt=im.alt; lb.hidden=false; return; } if(e.target.closest('#lb')) $('#lb').hidden=true; });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') $('#lb').hidden=true; });
+wireAll(); drawMap(1); drawMap(2); refreshList(); go(0);
+window.__test={state,goId,M,refreshList};
+</script>
+</body>
+</html>
