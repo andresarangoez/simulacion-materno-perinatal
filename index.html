@@ -234,6 +234,7 @@ body.on-cover .hud-logos{visibility:hidden}
 .frow span{font-size:14px;color:var(--mut);font-weight:600}
 .frow .pick button{padding:5px 12px;font-size:14px}
 .nums button{min-width:44px}
+#sitPick button[hidden]{display:none!important}
 </style>
 <style>
 .ini{display:grid;grid-template-columns:1fr 1fr;gap:20px}
@@ -464,7 +465,7 @@ body.on-ini .ini-bg{opacity:.22}
       <h2 class="r" style="--i:0">¿En qué sala están?</h2>
       <div class="ini r" style="--i:1">
         <button class="sala-card" type="button" data-sala="1" aria-pressed="false"><img src="img/recepcion.jpg" alt=""><span class="sc-b"><b>Sala 1</b><span>Trabajo de parto normal</span><small>Primigestante y multípara</small></span></button>
-        <button class="sala-card" type="button" data-sala="2" aria-pressed="false"><img src="img/simulador.jpg" alt=""><span class="sc-b"><b>Sala 2</b><span>Shock hipovolémico por embarazo ectópico roto</span><small>Primigestante y multípara</small></span></button>
+        <button class="sala-card" type="button" data-sala="2" aria-pressed="false"><img src="img/simulador.jpg" alt=""><span class="sc-b"><b>Sala 2</b><span>Shock hipovolémico por embarazo ectópico roto</span><small>Cuatro situaciones, del shock leve al severo</small></span></button>
       </div>
       <div class="panel r" style="--i:2;display:flex;flex-direction:column;gap:12px">
         <div class="teamrow"><span class="grp-l" style="min-width:90px">Situación</span><div class="teamrow sitrow" id="sitPick"></div><span class="msg" id="iniMsg"></span><button class="btn mag" type="button" id="goBtn" style="margin-left:auto;padding:14px 34px;font-size:17px;color:#FFFFFF;background:#0D2C66;border-color:#0D2C66">Iniciar</button></div>
@@ -634,7 +635,7 @@ const S2PH=(d)=>[
  {n:'Reanimación inicial',cap:'Monitor',live:{},stages:[{label:'Ahora',v:d.v0,note:'<b>Actividades del equipo:</b> monitorización · dos accesos venosos · muestras y reserva de sangre · sonda vesical con diuresis horaria · abrigo · conteo de compresas'}],
   q:'Inicien la reanimación según el grado de shock.',
   data:[['Peso',d.peso],['Banco de sangre','Unidades disponibles']],
-  type:'pick',groups:[['Oxígeno',['No por ahora','Sí, para SatO₂ mayor de 94 %'],'Sí, para SatO₂ mayor de 94 %'],['Accesos venosos de 16 a 18 G',['1','2'],'2'],['Reposición',['Solo cristaloides','Cristaloides y sangre'],'Cristaloides y sangre']]},
+  type:'pick',groups:[['Oxígeno',['No por ahora','Sí, para SatO₂ mayor de 94 %'],d.grado===2?'No por ahora':'Sí, para SatO₂ mayor de 94 %'],['Accesos venosos de 16 a 18 G',['1','2'],'2'],['Reposición',['Solo cristaloides','Cristaloides y sangre'],d.grado===2?'Solo cristaloides':'Cristaloides y sangre']]},
  {n:'Transfusión',cap:'Monitor',live:{},stages:[{label:'Tras 1000 ml',v:d.v1,note:`<b>Llegan glóbulos rojos ${d.grupo}.</b> ${d.labsShort}`}],
   q:'Llegó la primera unidad. Marquen todo lo que deben hacer para transfundirla con seguridad, y nada más.',
   data:[['Grupo de la paciente',d.grupo],['Unidad',`${d.grupo}, vigente, bolsa íntegra`]],
@@ -645,9 +646,25 @@ const S2PH=(d)=>[
   type:'meds',meds:d.vaso},
  {n:'Paso a salas',cap:'Paso a cirugía',vis:`<div class="gal gh"><img src="img/mesa.jpg" alt="Paciente en la mesa quirúrgica" style="object-fit:cover"><img src="img/ectopico.jpg" alt="Localizaciones del embarazo ectópico"></div>`,
   q:`El ectópico está roto en la porción ampular de la trompa derecha. ¿Cuál es el manejo para ${d.nombre.split(',')[0]}?`,
-  data:[['Localización','Ampular, trompa derecha (cerca del 80 % de los ectópicos)'],['Hallazgo','Ectópico roto con hemoperitoneo'],['Estado','Inestable, con norepinefrina y sangre en curso']],
-  type:'opts',opts:[['Laparotomía urgente en salas de cirugía con soporte y sangre en curso',1],['Laparoscopia programada cuando la paciente se estabilice',0],['Metotrexato intramuscular y control seriado de β-hCG',0],['Manejo expectante con ecografías de control',0]]}
-];
+  data:[['Localización','Ampular, trompa derecha (cerca del 80 % de los ectópicos)'],['Hallazgo','Ectópico roto con hemoperitoneo'],['Estado',d.estado||'Inestable, con norepinefrina y sangre en curso']],
+  type:'opts',opts:[['Laparotomía urgente en salas de cirugía',1],['Laparoscopia programada cuando la paciente se estabilice',0],['Metotrexato intramuscular y control seriado de β-hCG',0],['Manejo expectante con ecografías de control',0]]}
+].filter(p=>!(d.grado===2&&(p.n==='Transfusión'||p.n==='Descompensación'))).flatMap(p=>{
+  if(!d.full) return [p];
+  const nm=d.nombre.split(',')[0];
+  if(p.n==='Ingreso') return [p,{n:'Ecografía',cap:'Ecografía en la cama',live:{},stages:[{label:'Ahora',v:d.v0,note:'<b>β-hCG cualitativa positiva.</b> '+d.examen}],
+    q:`Hacen ecografía en la cama a ${nm}. ¿Qué indica este hallazgo?`,
+    data:[['Útero','Vacío, sin saco gestacional'],['Anexo derecho','Masa compleja de 4 cm'],['Fondo de saco','Líquido libre abundante']],
+    type:'opts',opts:[['Embarazo intrauterino temprano con quiste de cuerpo lúteo',0],['Embarazo ectópico roto con hemoperitoneo',1],['Aborto completo sin complicaciones',0],['Embarazo ectópico no roto que puede esperar',0]]}];
+  if(p.n==='Reanimación inicial'&&d.grado===2) return [p,{n:'Reevaluación',cap:'Monitor',live:{},stages:[{label:'Tras 1000 ml',v:d.v1,note:'<b>Recibió 1000 ml de cristaloides.</b> Más tranquila, llenado capilar de 2 segundos.'}],
+    q:`Pasaron 1000 ml de cristaloides. ¿Cómo responde ${nm} y qué hacen?`,
+    data:[['Antes','FC 112 · PA 108/80'],['Ahora',`FC ${d.v1.hr} · PA ${d.v1.sys}/${d.v1.dia}`],['Diuresis','35 ml/h']],
+    type:'opts',opts:[['Respondió: sigue con cristaloides, reserva sangre y la preparan para cirugía',1],['No respondió: inicien norepinefrina de inmediato',0],['Respondió: ya no necesita cirugía, puede irse a casa',0],['Respondió: suspendan los líquidos y retiren los accesos venosos',0]]}];
+  if(p.n==='Paso a salas') return [{n:'Preparación quirúrgica',cap:'Antes de salas',vis:`<img src="img/cirugia.jpg" alt="Cirugía de embarazo ectópico" style="object-fit:cover">`,
+    q:`${nm} va para cirugía. Marquen todo lo que deben preparar, y nada más.`,
+    data:[['Grupo',d.grupo],['Último alimento',d.ayuno]],
+    type:'multi',items:[['Consentimiento informado firmado',1],['Reserva de sangre cruzada para salas',1],['Retirar joyas, prótesis y esmalte',1],['Entregar a salas: signos, líquidos, diuresis y medicamentos',1],['Lista de verificación de cirugía segura',1],['Aplicar enema evacuante antes de subir',0],['Esperar la β-hCG cuantitativa para decidir la cirugía',0],['Rasurar toda la zona con cuchilla',0]]},p];
+  return [p];
+});
 M[2].sits[1]={who:'Sofía · primigestante',tx:'Sofía, 22 años, primigestante.\nFUM: 19 de septiembre de 2026. Hoy: 10 de noviembre de 2026.\nDolor súbito en la fosa ilíaca derecha y mareo.\nObjetivo: tratar el shock y llevarla estable a cirugía.',
  ph:S2PH({nombre:'Sofía, 22 años',fum:'19 de septiembre de 2026',compresas:'3 compresas empapadas en la última hora',anam:'primer embarazo. Amenorrea de 7 semanas. No ha tenido partos, abortos, cesáreas, ectópicos ni mortinatos.',fo:[1,0,0,0,0,0,0],
   v0:{hr:128,sys:84,dia:56,rr:32,spo2:90,temp:36.0},n0:'<b>Ansiosa y confusa.</b> Pálida, fría, sudorosa. Llenado capilar de 4 segundos.',
@@ -664,6 +681,21 @@ M[2].sits[2]={who:'Daniela · multípara',tx:'Daniela, 34 años, multípara.\nFU
   diuresis:'Mínima, menos de 5 ml/h',pp:'28 mmHg, disminuida',mental:'Confusa y letárgica',grado:4,peso:'70 kg',grupo:'A positivo',
   v1:{hr:138,sys:72,dia:42,rr:34,spo2:92,temp:35.8},v2:{hr:142,sys:70,dia:38,rr:34,spo2:93,temp:35.8},pam:49,
   vaso:[['Furosemida','','#1C9FD6',0],['Labetalol','','#16A37F',0],['Norepinefrina','','#E8457A',1],['Dobutamina','','#7A5AF8',0]]})};
+M[2].sits[3]={who:'Mariana · 30 años',tx:'Mariana, 30 años, secundigestante.\nFUM: 20 de septiembre de 2026. Hoy: 10 de noviembre de 2026.\nLa encontraron desmayada en el baño de su trabajo tras un dolor abdominal súbito.\nSus compañeros dicen que tenía un retraso y no se había hecho la prueba.\nObjetivo: tratar el shock y llevarla estable a cirugía.',
+ ph:S2PH({nombre:'Mariana, 30 años',fum:'20 de septiembre de 2026',compresas:'2 compresas manchadas en la última hora',anam:'tercer embarazo, amenorrea de 7 semanas. Tuvo un parto vaginal hace 7 años (hijo vivo) y un aborto espontáneo a las 8 semanas hace 3 años. Antecedente de enfermedad pélvica inflamatoria. No ha tenido cesáreas, ectópicos ni mortinatos.',fo:[3,1,1,0,0,0,1],
+  v0:{hr:152,sys:64,dia:38,rr:40,spo2:85,temp:35.4},n0:'<b>Letárgica, responde al dolor.</b> Muy pálida, fría, abdomen distendido y doloroso. Llenado capilar mayor de 4 segundos.',
+  chips:['Letárgica','FC 152','PA 64/38','FR 40','Diuresis mínima'],labs:'<span><b>Hemoglobina</b> 5,9 g/dl <i>ref. 12–16</i></span><span><b>Hematocrito</b> 18 % <i>ref. 36–46</i></span><span><b>Grupo</b> B +</span>',
+  labsShort:'Hemoglobina 5,9 g/dl (ref. 12–16) · Hematocrito 18 % (ref. 36–46).',
+  diuresis:'Mínima, menos de 5 ml/h',pp:'26 mmHg, disminuida',mental:'Letárgica',grado:4,peso:'62 kg',grupo:'B positivo',
+  v1:{hr:144,sys:70,dia:40,rr:36,spo2:91,temp:35.6},v2:{hr:146,sys:66,dia:36,rr:36,spo2:92,temp:35.6},pam:46,
+  vaso:[['Labetalol','','#16A37F',0],['Dobutamina','','#7A5AF8',0],['Furosemida','','#1C9FD6',0],['Norepinefrina','','#E8457A',1]],full:1,ayuno:'Almuerzo hace 2 horas',examen:'Abdomen distendido, Blumberg positivo, dolor referido al hombro derecho.'})};
+M[2].sits[4]={who:'Andrea · 27 años',tx:'Andrea, 27 años, secundigestante.\nFUM: 12 de septiembre de 2026. Hoy: 10 de noviembre de 2026.\nConsulta por dolor en la fosa ilíaca derecha desde hace 3 horas y sangrado vaginal escaso.\nSe hizo una prueba casera positiva hace una semana.\nObjetivo: reconocer el shock a tiempo y llevarla a cirugía.',
+ ph:S2PH({nombre:'Andrea, 27 años',fum:'12 de septiembre de 2026',compresas:'1 compresa manchada en la última hora',anam:'segundo embarazo, amenorrea de 8 semanas. Tuvo una cesárea hace 4 años (hijo vivo). Fuma 10 cigarrillos al día. No ha tenido partos vaginales, abortos, ectópicos ni mortinatos.',fo:[2,0,0,1,0,0,1],
+  v0:{hr:112,sys:108,dia:80,rr:24,spo2:97,temp:36.4},n0:'<b>Ansiosa, orientada.</b> Algo pálida, piel tibia. Llenado capilar de 2 a 3 segundos.',
+  chips:['Moderadamente ansiosa','FC 112','PA 108/80','FR 24','Diuresis 25 ml/h'],labs:'<span><b>Hemoglobina</b> 10,6 g/dl <i>ref. 12–16</i></span><span><b>Hematocrito</b> 32 % <i>ref. 36–46</i></span><span><b>Grupo</b> O +</span>',
+  labsShort:'Hemoglobina 10,6 g/dl (ref. 12–16) · Hematocrito 32 % (ref. 36–46).',
+  diuresis:'25 ml/h',pp:'28 mmHg, disminuida',mental:'Moderadamente ansiosa',grado:2,peso:'58 kg',grupo:'O positivo',
+  estado:'Estable, respondió a cristaloides',full:1,v1:{hr:96,sys:114,dia:76,rr:20,spo2:98,temp:36.5},ayuno:'Desayuno hace 4 horas',examen:'Dolor a la palpación en la fosa ilíaca derecha, Blumberg positivo.'})};
 
 /* ===== Construcción ===== */
 const deck=$('#deck');
@@ -689,7 +721,7 @@ function phaseHTML(p,i,s,t,id){
 const state={sala:null,sit:null,team:null};
 const done={};
 const results={};
-for(const s of [1,2]) for(const t of [1,2]){
+for(const s of [1,2]) for(const t of Object.keys(M[s].sits).map(Number)){
   const m=M[s], c=m.sits[t], key=s+'-'+t; done[key]=c.ph.map(()=>0); results[key]=[];
   deck.insertAdjacentHTML('beforeend',`<section class="slide" id="b${s}${t}" data-k="${key}" aria-label="El caso"><div class="in"><h2 class="r" style="--i:0">Situación ${t}: el caso</h2><div class="two"><div style="display:flex;flex-direction:column;gap:18px"><div class="panel r" style="--i:1"><div class="tx" data-tx></div></div><div class="rules r" style="--i:2;grid-template-columns:1fr"><div class="rule"><b>CADA FASE SE ABRE AL RESOLVERLA</b><p>El equipo responde el problema de cada fase para pasar a la siguiente.</p></div><div class="rule"><b>LOS DATOS SE PIDEN</b><p>Tocan el dato que necesitan y el docente lo confirma en el simulador.</p></div></div></div><div class="photo r" style="--i:2"><img src="${s===1?'img/simu2.jpg':'img/mesa.jpg'}" alt="Simulación" style="object-fit:cover"></div></div><div class="row r" style="--i:3"><button class="btn mag" type="button" data-route="${key}">Ver la ruta</button></div></div></section>`);
   deck.insertAdjacentHTML('beforeend',`<section class="slide" id="m${s}${t}" data-k="${key}" aria-label="Ruta"><div class="in"><h2 class="r" style="--i:0">Ruta de atención</h2><div class="map panel r" style="--i:1"><svg viewBox="0 0 1100 300" data-map role="img" aria-label="Ruta de fases"></svg></div><p class="hint r" style="--i:2">Toquen una fase abierta para entrar. Las cumplidas se encienden.</p></div></section>`);
@@ -754,8 +786,9 @@ function startClock(){ clearInterval(tick); t0=Date.now(); elapsed=0; $('#clock'
 function finish(key){ clearInterval(tick); results[key].push([(results[key].length===0?'Primera hora':'Segunda hora')+(results[key].length>1?' ('+(results[key].length+1)+')':''),elapsed]); const [s,t]=key.split('-'); $(`#e${s}${t} [data-board]`).innerHTML=results[key].map((r,i)=>`<div><b>${i+1}</b><span>${r[0]}</span><span>${fmt(r[1])}</span></div>`).join(''); }
 
 /* Inicio */
-$('#sitPick').innerHTML=[1,2].map(n=>`<button type="button" aria-pressed="false" data-s="${n}">Situación ${n}</button>`).join('');
-function sitLabels(){ const s=state.selSala; $$('#sitPick button').forEach(b=>{ const n=+b.dataset.s; b.innerHTML=`Situación ${n}`+(s?`<small>${M[s].sits[n].who}</small>`:''); }); }
+$('#sitPick').innerHTML=[1,2,3,4].map(n=>`<button type="button" aria-pressed="false" data-s="${n}">Situación ${n}</button>`).join('');
+function sitLabels(){ const s=state.selSala; if(s&&state.selSit&&!M[s].sits[state.selSit]){ state.selSit=0; $$('#sitPick button').forEach(x=>x.setAttribute('aria-pressed','false')); } $$('#sitPick button').forEach(b=>{ const n=+b.dataset.s; b.hidden=n>2&&!(s&&M[s].sits[n]); if(b.hidden) return; b.innerHTML=`Situación ${n}`+(s?`<small>${M[s].sits[n].who}</small>`:''); }); }
+sitLabels();
 $$('.sala-card').forEach(c=>c.addEventListener('click',()=>{ $$('.sala-card').forEach(x=>x.setAttribute('aria-pressed',String(x===c))); state.selSala=+c.dataset.sala; sitLabels(); tone(900,.06,'triangle',.08); }));
 $$('#sitPick button').forEach(b=>b.addEventListener('click',()=>{ $$('#sitPick button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); state.selSit=+b.dataset.s; tone(900,.06,'triangle',.08); }));
 $('#goBtn').addEventListener('click',()=>{
