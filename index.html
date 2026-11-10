@@ -338,6 +338,53 @@ body.on-ini .ini-bg{opacity:.22}
 .shk tbody tr td:nth-child(3){background:#EAF1FB}.shk tbody tr td:nth-child(4){background:#DCE9F9}.shk tbody tr td:nth-child(5){background:#C9DCF5}
 .shk-n{font-size:13px;color:var(--mut);font-weight:600}
 
+
+.lmon{width:100%;height:100%;background:#071a38;border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.lm-waves{display:grid;grid-template-rows:1fr 1fr;gap:6px;flex:1;min-height:150px}
+.lm-w{position:relative;background:#071a38;border:1px solid #17305a;border-radius:8px;overflow:hidden;min-height:64px}
+.lm-w span{position:absolute;left:8px;top:4px;font-family:var(--m);font-weight:700;font-size:11px;color:#8FA6CC;letter-spacing:.08em;z-index:1}
+.lm-w canvas{position:absolute;inset:0;width:100%;height:100%}
+.lm-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.lm-c{background:#0c2549;border-radius:8px;padding:6px 10px;display:flex;flex-direction:column;min-width:0}
+.lm-c span{font-family:var(--m);font-weight:800;font-size:11px;letter-spacing:.08em;color:#8FA6CC}
+.lm-c b{font-family:var(--h);font-size:clamp(22px,2.4vw,32px);line-height:1.05;white-space:nowrap;font-variant-numeric:tabular-nums}
+.lm-c small{font-size:11px;color:#8FA6CC}
+.c-hr b{color:#5CF2A0}.c-bp b{color:#FF8FA3}.c-rr b{color:#FFE27A}.c-sp b{color:#7FD3FF}.c-t b{color:#E9EEF8}.c-fcf b{color:#C9A2FF}
+.lm-c.al{box-shadow:inset 0 0 0 2px #FF5C6E;animation:alr 1s steps(2) infinite}
+@keyframes alr{50%{box-shadow:inset 0 0 0 2px transparent}}
+.lm-note{color:#E4ECF8;font-size:14px;line-height:1.4;padding:4px 4px 0}
+.lm-note b{color:#FFFFFF}
+.holo.live{padding:0;border:0;background:transparent}
+.stg{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;width:100%}
+.lcol .stg{margin-top:0}
+.stg button{border:1.5px solid var(--line2);background:#FFFFFF;border-radius:10px;padding:8px 14px;font-family:var(--m);font-weight:700;color:var(--ink);font-size:14px}
+.stg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#FFFFFF}
+.stg .rev{margin-left:auto;background:#EAF1FB;border-color:var(--cy);color:var(--cy)}
+.holo.live{flex-direction:column}
+.card-pt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:#0D2C66;border-radius:12px;padding:10px 12px}
+.card-pt b{font-family:var(--m);font-weight:800;font-size:13px;color:#FFFFFF;margin-right:6px}
+.card-pt span{background:rgba(255,255,255,.12);color:#FFFFFF;border-radius:8px;padding:4px 9px;font-weight:700;font-size:13px}
+.labs{display:flex;flex-wrap:wrap;gap:6px}
+.labs span{background:#EAF1FB;border-radius:8px;padding:5px 10px;font-size:13px;color:var(--ink)}
+.labs i{font-style:normal;color:var(--mut);font-size:12px;margin-left:4px}
+.gal.gv2{display:flex;flex-direction:column;gap:8px;width:100%}
+.shk-tx td{background:#0D2C66!important;color:#FFFFFF;font-weight:700}
+.shk table{font-size:12.5px}
+.shk th,.shk td{padding:5px 5px}
+.sitrow button{display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.sitrow button small{font-size:12px;font-weight:600;opacity:.8}
+#sndBtn.off .w{display:none}
+#sndBtn.off{opacity:.6}
+.calc{position:fixed;right:24px;top:70px;z-index:35;width:260px;background:#FFFFFF;border:1px solid var(--line2);border-radius:16px;box-shadow:0 20px 50px rgba(13,44,102,.2);padding:12px;display:flex;flex-direction:column;gap:8px}
+.c-top{display:flex;justify-content:space-between;align-items:center}
+.c-top b{font-family:var(--m);font-weight:800;color:var(--ink);font-size:14px}
+.c-top button{border:0;background:#F4F8FD;border-radius:8px;width:28px;height:28px;color:var(--ink)}
+.c-disp{background:#0D2C66;color:#FFFFFF;border-radius:10px;padding:10px 12px;text-align:right;font-family:var(--h);font-size:24px;min-height:48px;overflow:hidden;white-space:nowrap}
+.c-keys{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.c-keys button{border:1px solid var(--line2);background:#FFFFFF;border-radius:10px;padding:10px 0;font-weight:700;font-size:16px;color:var(--ink)}
+.c-keys .op{background:#EAF1FB;color:var(--cy)}
+.c-keys .eq{background:var(--ink);color:#FFFFFF;border-color:var(--ink)}
+
 .grp-l{font-family:var(--m);font-weight:800;font-size:12px;letter-spacing:.14em;color:var(--cy);text-transform:uppercase}
 </style>
 </head>
@@ -350,6 +397,8 @@ body.on-ini .ini-bg{opacity:.22}
     <button class="chip hudbtn" id="homeBtn" type="button">INICIO</button>
     <span class="chip" id="where" hidden></span>
     <span class="chip">TIEMPO <span id="clock">00:00</span></span>
+    <button class="chip ghost" id="calcBtn" type="button" title="Calculadora">CALCULADORA</button>
+    <button class="chip ghost" id="sndBtn" type="button" aria-pressed="true" title="Sonido del monitor" style="padding:6px 9px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
     <button class="chip ghost" id="refBtn" type="button">REFERENCIAS</button>
     <button class="chip ghost" id="fs" type="button" aria-label="Pantalla completa" title="Pantalla completa" style="padding:6px 9px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
   </div>
@@ -372,17 +421,18 @@ body.on-ini .ini-bg{opacity:.22}
     <div class="in">
       <h2 class="r" style="--i:0">¿En qué sala están?</h2>
       <div class="ini r" style="--i:1">
-        <button class="sala-card" type="button" data-sala="1" aria-pressed="false"><img src="img/recepcion.jpg" alt=""><span class="sc-b"><b>Sala 1</b><span>Trabajo de parto normal</span><small>Camila · 39 + 2 semanas</small></span></button>
-        <button class="sala-card" type="button" data-sala="2" aria-pressed="false"><img src="img/simulador.jpg" alt=""><span class="sc-b"><b>Sala 2</b><span>Shock hipovolémico por embarazo ectópico roto</span><small>Daniela · 7 semanas de amenorrea</small></span></button>
+        <button class="sala-card" type="button" data-sala="1" aria-pressed="false"><img src="img/recepcion.jpg" alt=""><span class="sc-b"><b>Sala 1</b><span>Trabajo de parto normal</span><small>Primigestante y multípara</small></span></button>
+        <button class="sala-card" type="button" data-sala="2" aria-pressed="false"><img src="img/simulador.jpg" alt=""><span class="sc-b"><b>Sala 2</b><span>Shock hipovolémico por embarazo ectópico roto</span><small>Primigestante y multípara</small></span></button>
       </div>
-      <div class="panel r" style="--i:2;display:flex;flex-direction:column;gap:14px">
-        <span class="grp-l">Equipo</span>
-        <div class="teamrow"><div class="teamrow" id="teamPick"></div><span class="msg" id="iniMsg"></span><button class="btn mag" type="button" id="goBtn" style="margin-left:auto;padding:14px 34px;font-size:17px;color:#FFFFFF;background:#0D2C66;border-color:#0D2C66">Iniciar</button></div>
+      <div class="panel r" style="--i:2;display:flex;flex-direction:column;gap:12px">
+        <div class="teamrow"><span class="grp-l" style="min-width:90px">Situación</span><div class="teamrow sitrow" id="sitPick"></div></div>
+        <div class="teamrow"><span class="grp-l" style="min-width:90px">Equipo</span><div class="teamrow" id="teamPick"></div><span class="msg" id="iniMsg"></span><button class="btn mag" type="button" id="goBtn" style="margin-left:auto;padding:14px 34px;font-size:17px;color:#FFFFFF;background:#0D2C66;border-color:#0D2C66">Iniciar</button></div>
       </div>
     </div>
   </section>
 </main>
 
+<div class="calc" id="calc" hidden><div class="c-top"><b>Calculadora</b><button type="button" id="cClose" aria-label="Cerrar">✕</button></div><div class="c-disp" id="cDisp">0</div><div class="c-keys" id="cKeys"></div></div>
 <div class="lb" id="lb" hidden><img alt=""><span>Toque para cerrar</span></div>
 <div class="unlock" id="unlock"><div>FASE SUPERADA</div></div>
 
@@ -403,194 +453,318 @@ const okSnd=()=>{ tone(660,.12,'triangle',.15); tone(990,.18,'triangle',.15,.1);
 const noSnd=()=>tone(180,.3,'sawtooth',.1);
 const esc=t=>String(t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 
-const MON=(cells,note)=>`<div class="mon2"><div class="mg">${cells.map(c=>`<div class="mc${c[2]?' al':''}"><span>${c[0]}</span><b>${c[1]}</b></div>`).join('')}</div>${note?`<div class="note"><b>Lo que encuentran</b>${note}</div>`:''}</div>`;
+/* ===== Monitor multiparamétrico en vivo ===== */
+let soundOn=true;
+const LIVE=[];
+function liveHTML(id,opts){
+  const cells=[['FC','hr','lpm','c-hr'],['PA','bp','mmHg','c-bp'],['FR','rr','rpm','c-rr'],['SatO₂','spo2','%','c-sp'],['T','temp','°C','c-t']];
+  if(opts&&opts.fcf) cells.push(['FCF','fcf','lpm','c-fcf']);
+  return `<div class="lmon" data-live="${id}"><div class="lm-waves"><div class="lm-w"><span>ECG II</span><canvas data-ecg></canvas></div><div class="lm-w"><span>${opts&&opts.fcf?'Tocodinamómetro':'Pleth'}</span><canvas data-wave2></canvas></div></div><div class="lm-grid">${cells.map(c=>`<div class="lm-c ${c[3]}" data-k="${c[1]}"><span>${c[0]}</span><b>--</b><small>${c[2]}</small></div>`).join('')}</div>${opts&&opts.note!==false?'<div class="lm-note" data-note></div>':''}</div>`;
+}
+function Live(el){
+  const st={hr:80,sys:120,dia:80,rr:16,spo2:98,temp:36.8,fcf:0,toco:0,note:'',cur:{}};
+  const ecg=$('[data-ecg]',el), w2=$('[data-wave2]',el);
+  let t=0, lastBeat=0, x=0, x2=0, prevY=null, prevY2=null;
+  const ctx=ecg.getContext('2d'), ctx2=w2.getContext('2d');
+  function size(){ [ecg,w2].forEach(c=>{ const r=c.getBoundingClientRect(); c.width=Math.max(10,r.width*devicePixelRatio); c.height=Math.max(10,r.height*devicePixelRatio); }); x=0;x2=0;prevY=null;prevY2=null; ctx.fillStyle='#071a38'; ctx.fillRect(0,0,ecg.width,ecg.height); ctx2.fillStyle='#071a38'; ctx2.fillRect(0,0,w2.width,w2.height); }
+  function ecgY(ph){ // ph 0..1 dentro del latido
+    if(ph<.08) return Math.sin(ph/.08*Math.PI)*.12;
+    if(ph<.16) return 0; if(ph<.18) return -.15; if(ph<.21) return 1; if(ph<.24) return -.3; if(ph<.4) return 0;
+    if(ph<.55) return Math.sin((ph-.4)/.15*Math.PI)*.25; return 0; }
+  function set(v){ Object.assign(st,v); }
+  function jitter(base,amp){ return base+(Math.random()*2-1)*amp; }
+  function updNums(){
+    const c=st.cur;
+    c.hr=Math.round(jitter(st.hr,2)); c.sys=Math.round(jitter(st.sys,2)); c.dia=Math.round(jitter(st.dia,2)); c.rr=Math.round(jitter(st.rr,1)); c.spo2=Math.min(100,Math.round(jitter(st.spo2,.6))); c.temp=(jitter(st.temp,.05)).toFixed(1); c.fcf=Math.round(jitter(st.fcf,4));
+    const put=(k,v)=>{ const b=$(`[data-k="${k}"] b`,el); if(b) b.textContent=v; };
+    put('hr',c.hr); put('bp',c.sys+'/'+c.dia); put('rr',c.rr); put('spo2',c.spo2); put('temp',String(c.temp).replace('.',',')); put('fcf',st.fcf?c.fcf:'--');
+    const al=(k,b)=>{ const e=$(`[data-k="${k}"]`,el); if(e) e.classList.toggle('al',b); };
+    al('hr',c.hr>100||c.hr<50); al('bp',c.sys<90); al('rr',c.rr>22||c.rr<10); al('spo2',c.spo2<94); al('temp',c.temp>=38); al('fcf',st.fcf&&(c.fcf<110||c.fcf>160));
+    const n=$('[data-note]',el); if(n) n.innerHTML=st.note||'';
+  }
+  let numT=0, raf=null, last=performance.now();
+  function frame(now){
+    raf=requestAnimationFrame(frame);
+    if(!el.closest('.slide.on')) return;
+    const dt=Math.min(.05,(now-last)/1000); last=now; t+=dt; numT+=dt;
+    if(numT>1.6){ numT=0; updNums(); }
+    const hr=st.cur.hr||st.hr, period=60/hr;
+    if(t-lastBeat>=period){ lastBeat=t; if(soundOn){ const sp=st.cur.spo2||st.spo2; tone(400+ (sp-80)*25,.07,'sine',.07); } }
+    const ph=((t-lastBeat)/period);
+    const W=ecg.width,H=ecg.height, px=dt*W/4;
+    // ECG
+    ctx.fillStyle='#071a38'; ctx.fillRect(x,0,px+8,H);
+    const y=H*.55-ecgY(ph)*H*.4;
+    ctx.strokeStyle='#5CF2A0'; ctx.lineWidth=2*devicePixelRatio; ctx.beginPath(); ctx.moveTo(x,prevY==null?y:prevY); ctx.lineTo(x+px,y); ctx.stroke(); prevY=y; x+=px; if(x>W){ x=0; prevY=null; }
+    // onda 2
+    const W2=w2.width,H2=w2.height, px2=dt*W2/(st.fcf?14:4);
+    ctx2.fillStyle='#071a38'; ctx2.fillRect(x2,0,px2+8,H2);
+    let y2;
+    if(st.fcf){ const per=600/Math.max(1,st.toco); const cp=(t%per)/per; const c=cp<.12?Math.sin(cp/.12*Math.PI):0; y2=H2*.85-c*H2*.7-(Math.random()*.02*H2); ctx2.strokeStyle='#FFD36B'; }
+    else { const p2=((t-lastBeat)/period); y2=H2*.75-Math.max(0,Math.sin(Math.min(1,p2*1.6)*Math.PI))*H2*.5; ctx2.strokeStyle='#7FD3FF'; }
+    ctx2.lineWidth=2*devicePixelRatio; ctx2.beginPath(); ctx2.moveTo(x2,prevY2==null?y2:prevY2); ctx2.lineTo(x2+px2,y2); ctx2.stroke(); prevY2=y2; x2+=px2; if(x2>W2){ x2=0; prevY2=null; }
+  }
+  const api={set:(v)=>{ set(v); updNums(); },size,start(){ size(); updNums(); if(!raf) raf=requestAnimationFrame(frame); }};
+  return api;
+}
 
+/* ===== Datos ===== */
+const HOY='martes 10 de noviembre de 2026';
+const S1PH=(d)=>[
+ {n:'Ingreso',cap:'Datos de ingreso',vis:`<div class="gal gv"><div class="card-pt"><b>${d.nombre}</b><span>Hoy: ${HOY}</span><span>FUM: ${d.fum}</span><span>${d.extra}</span></div><img src="img/simu2.jpg" alt="Simulador de parto" style="object-fit:cover"></div>`,
+  q:`Anamnesis: ${d.anam} Armen la fórmula obstétrica y calculen la edad gestacional y la FPP. Pueden usar la calculadora de arriba.`,
+  data:[['FUM',d.fum],['Fecha de hoy',HOY],['Ciclos','Regulares']],
+  type:'ingreso',ans:d.fo,eg:d.eg,fpp:d.fpp},
+ {n:'Trabajo de parto',cap:'Monitor materno-fetal',live:{fcf:true},stages:d.stages,
+  q:'Coloquen el tocodinamómetro y el transductor de FCF. Avancen minuto a minuto, palpen el cuello en el simulador y digan la dilatación antes de ver la imagen.',
+  data:[['Membranas',d.membranas],['Presentación','Cefálica'],['Posición','Occipito-anterior']],
+  type:'opts',opts:d.tpOpts,reveal:'img/dilatacion.jpg'},
+ {n:'Expulsivo',cap:'Expulsivo',vis:`<div class="gal g4"><img src="img/perine.jpg" alt="Protección del periné" style="object-fit:cover"><img src="img/cabeza.jpg" alt="Salida de la cabeza" style="object-fit:cover"><img src="img/rotacion.jpg" alt="Rotación externa"><img src="img/maniobras.jpg" alt="Maniobras en el expulsivo"></div>`,
+  q:'La cabeza corona con el pujo. ¿Qué hace la mano de quien atiende el parto?',
+  data:[['FCF entre pujos',d.fcfExp],['Contracciones','5 en 10 minutos, 60 s']],
+  type:'opts',opts:[['Tracciona suave la cabeza para acortar la salida del bebé',0],['Controla la salida con la palma y protege el periné sin traccionar',1],['Pide un pujo fuerte y sostenido hasta que salga la cabeza',0],['Indica presión sobre el fondo uterino para ayudar a la salida',0]]},
+ {n:'Recepción',cap:'Test de Apgar',vis:`<div class="duo"><img src="img/apgar.jpg" alt="Test de Apgar"><img src="img/piel.jpg" alt="Recién nacido piel con piel" style="object-fit:cover"></div>`,
+  q:'El bebé está sobre el pecho de la madre. ¿Cuál es su Apgar al minuto 1?',
+  data:d.apgarData,type:'num',ans:d.apgar},
+ {n:'Pinzamiento',cap:'Cordón umbilical',vis:`<div class="gal g3"><img src="img/pinz2.jpg" alt="Pinzamiento del cordón" style="object-fit:cover"><img src="img/pinzamiento.jpg" alt="Pinzas en el cordón" style="object-fit:cover"><img src="img/kit.jpg" alt="Kit con pinzas de cordón"></div>`,
+  q:'Muevan el reloj hasta el momento en que pinzarían el cordón.',
+  data:[['Bebé',d.rnPinz],['Cordón','Late']],type:'range',min:60,max:180},
+ {n:'Alumbramiento',cap:'Placenta y oxitocina',vis:`<div class="oxi"><img src="img/placenta.jpg" alt="Placenta"><img src="img/oxitocina.jpg" alt="Ampolla de oxitocina 10 UI" class="amp"></div>`,
+  q:d.alumQ,data:d.alumData,type:'opts',opts:d.alumOpts},
+ {n:'Posparto',cap:'Vigilancia del posparto',vis:`<img src="img/posparto.jpg" alt="Toma de presión en el posparto" style="object-fit:cover">`,
+  q:'Placenta completa. ¿Qué hace el equipo en la primera hora del posparto?',
+  data:[['PA','112/70'],['FC','88 lpm'],['Útero','Firme, bajo el ombligo'],['Sangrado','Moderado']],
+  type:'opts',opts:[['Pasarla a hospitalización y revisar tono y sangrado a las cuatro horas',0],['Vigilar tono, sangrado, PA y FC cada 15 minutos y apoyar la lactancia',1],['Hacer masaje uterino continuo aunque el útero ya esté firme y contraído',0],['Llevar al bebé a la cuna de calor para que la madre descanse una hora',0]]}
+];
+const STG=(arr)=>arr.map(a=>({label:a[0],v:{hr:a[1],sys:a[2],dia:a[3],rr:a[4],spo2:a[5],temp:a[6],fcf:a[7],toco:a[8]},note:`<b>${a[9]}</b>`}));
 const M={
- 1:{name:'Sala 1 · Trabajo de parto normal', patient:'Camila',
-  tx:'Camila, 27 años, 39 + 2 semanas.\nSegundo embarazo: un parto vaginal previo, hijo vivo.\nContracciones cada 2 minutos.\n«Siento que ya va a nacer».\nObjetivo: madre y bebé estables al final de la primera hora.',
-  photo:'img/simu2.jpg',
-  ph:[
-   {n:'Dilatación',tag:'Fase 01 · Ingreso a sala',cap:'Dilatación cervical',vis:`<div class="gal g2"><img src="img/dilatacion.jpg" alt="Dilatación cervical de 0 a 10 cm"><img src="img/simu2.jpg" alt="Simulador de parto" style="object-fit:cover"></div>`,
-    q:'Anamnesis: este es su segundo embarazo. El primero terminó en un parto vaginal hace 3 años y su hijo está vivo y sano. No ha tenido abortos, cesáreas, ectópicos ni mortinatos. Armen su fórmula obstétrica.',
-    data:[['Edad gestacional','39 + 2 semanas'],['Tacto','10 cm, borramiento 100 %, estación +2'],['Membranas','Rotas hace 2 h, líquido claro'],['FCF','138 lpm']],
-    type:'formula',ans:[2,1,0,0,0,0,1]},
-   {n:'Expulsivo',tag:'Fase 02 · Coronación',cap:'Maniobras en el expulsivo',vis:`<div class="gal g4"><img src="img/perine.jpg" alt="Protección del periné" style="object-fit:cover"><img src="img/cabeza.jpg" alt="Salida de la cabeza" style="object-fit:cover"><img src="img/rotacion.jpg" alt="Rotación externa"><img src="img/maniobras.jpg" alt="Maniobras en el expulsivo"></div>`,
-    q:'La cabeza corona con el pujo. ¿Qué hace la mano de quien atiende el parto?',
-    data:[['PA','124/80'],['FC materna','102 lpm'],['FCF entre pujos','128 lpm'],['Contracciones','Cada 2 min, 60 s']],
-    type:'opts',opts:[['Tracciona suave la cabeza para acelerar la salida',0],['Controla la salida con la palma y protege el periné, sin traccionar',1],['Pide un pujo fuerte y sostenido hasta que salga la cabeza',0],['Indica presión sobre el fondo uterino',0]]},
-   {n:'Recepción',tag:'Fase 03 · Recién nacido',cap:'Test de Apgar · piel con piel',vis:`<div class="duo"><img src="img/apgar.jpg" alt="Test de Apgar"><img src="img/piel.jpg" alt="Recién nacido piel con piel" style="object-fit:cover"></div>`,
-    q:'El bebé está sobre el pecho de Camila. ¿Cuál es su Apgar al minuto 1?',
-    data:[['Frecuencia cardíaca','140 lpm'],['Respiración','Llanto vigoroso'],['Tono','Alguna flexión de extremidades'],['Irritabilidad','Llora al estímulo'],['Color','Cuerpo rosado, manos y pies azulados']],
-    type:'num',ans:8},
-   {n:'Pinzamiento',tag:'Fase 04 · Cordón umbilical',cap:'Cordón umbilical y pinzas',vis:`<div class="gal g3"><img src="img/pinz2.jpg" alt="Pinzamiento del cordón piel con piel" style="object-fit:cover"><img src="img/pinzamiento.jpg" alt="Pinzas en el cordón umbilical" style="object-fit:cover"><img src="img/kit.jpg" alt="Kit con pinzas de cordón"></div>`,
-    q:'El bebé está vigoroso. Muevan el reloj hasta el momento en que pinzarían el cordón.',
-    data:[['Bebé','Vigoroso, piel con piel'],['Cordón','Late'],['Madre','Estable']],
-    type:'range',min:60,max:180},
-   {n:'Alumbramiento',tag:'Fase 05 · Placenta',cap:'Placenta y oxitocina',vis:`<div class="oxi"><img src="img/placenta.jpg" alt="Placenta y cordón umbilical"><img src="img/oxitocina.jpg" alt="Ampolla de oxitocina 10 UI" class="amp"></div>`,
-    q:'Ya nació el bebé. ¿Qué dosis y qué vía de oxitocina se usan para el manejo activo del alumbramiento?',
-    data:[['Hora del nacimiento','02:41'],['Signos de desprendimiento','El cordón se alarga, sale un chorro de sangre'],['Útero','Se eleva y se pone globuloso']],
-    type:'pick',groups:[['Dosis',['5 UI','10 UI','20 UI'],'10 UI'],['Vía',['IM','IV en bolo','Subcutánea'],'IM']]},
-   {n:'Posparto',tag:'Fase 06 · Primera hora',cap:'Vigilancia del posparto',vis:`<img src="img/posparto.jpg" alt="Toma de presión arterial en el posparto" style="object-fit:cover">`,
-    q:'Placenta completa a los 8 minutos. ¿Qué hace el equipo en la primera hora?',
-    data:[['PA','112/70'],['FC','88 lpm'],['Útero','Firme, bajo el ombligo'],['Sangrado','Moderado']],
-    type:'opts',opts:[['Pasarla a la habitación y revisarla en 4 horas',0],['Vigilar tono, sangrado, PA y FC cada 15 minutos y apoyar la lactancia',1],['Masaje uterino continuo, aunque el útero esté firme',0],['Llevarse al bebé a la cuna para que la madre descanse',0]]}
-  ]},
- 2:{name:'Sala 2 · Shock hipovolémico por ectópico roto', patient:'Daniela',
-  tx:'Daniela, 29 años, 7 semanas de amenorrea.\nAntecedentes: un parto vaginal (hijo vivo) y un aborto espontáneo.\nDolor súbito en la fosa ilíaca derecha, irradiado al hombro.\nMareo y sangrado vaginal escaso.\nObjetivo: reconocer y tratar el shock hipovolémico y dejarla lista para quirófano.',
-  photo:'img/mesa.jpg',
-  ph:[
-   {n:'Ingreso',tag:'',cap:'Signos al ingreso',vis:`<div class="gal gv"><img src="img/ectopico.jpg" alt="Localizaciones del embarazo ectópico">${MON([['PA','86/54',1],['FC','118',1],['FR','24',1],['T °C','36,1'],['SatO₂','95 %'],['Dolor','8/10',1]],'Ansiosa y agitada. Pálida, fría, sudorosa. Llenado capilar de 3 segundos.')}</div>`,
-    q:'Anamnesis: embarazo actual de 7 semanas. Tiene un hijo de 5 años nacido por parto vaginal y tuvo un aborto espontáneo a las 9 semanas hace 2 años. No ha tenido cesáreas, ectópicos previos ni mortinatos. Armen su fórmula obstétrica.',
-    data:[['FUM','Hace 7 semanas'],['Alergias','Pregunten'],['Compresas','2 compresas empapadas en la última hora']],
-    type:'formula',ans:[3,1,1,0,0,0,1]},
-   {n:'Grado de shock',tag:'',cap:'Clasificación del shock hipovolémico',vis:`<div class="shk"><div class="shk-pt"><b>Daniela ahora</b><span>Agitada</span><span>Pálida, fría, sudorosa</span><span>Pulso 118</span><span>PA 86/54</span><span>Hemoglobina 9,1 g/dl</span></div><table><thead><tr><th>Parámetro</th><th>Sin shock</th><th>Leve</th><th>Moderado</th><th>Severo</th></tr></thead><tbody><tr><th>Pérdida</th><td>500–1000 ml<br><small>10–15 %</small></td><td>1000–1500 ml<br><small>16–30 %</small></td><td>1500–2000 ml<br><small>31–40 %</small></td><td>&gt; 2000 ml<br><small>&gt; 40 %</small></td></tr><tr><th>Conciencia</th><td>Normal</td><td>Normal o agitada</td><td>Agitada</td><td>Letárgica o inconsciente</td></tr><tr><th>Perfusión</th><td>Normal</td><td>Palidez, frialdad</td><td>Palidez, frialdad, sudoración</td><td>Palidez, frialdad, sudoración, llenado capilar &gt; 3 s</td></tr><tr><th>Pulso</th><td>60–90</td><td>91–100</td><td>101–120</td><td>&gt; 120</td></tr><tr><th>PA sistólica</th><td>&gt; 90</td><td>80–90</td><td>70–79</td><td>&lt; 70</td></tr></tbody></table><p class="shk-n">Se clasifica por el signo más alterado.</p></div>`,
-    q:'Daniela tiene un embarazo ectópico roto con sangrado hacia el abdomen. Según el signo más alterado, ¿qué grado de shock hipovolémico tiene?',
-    data:[['Conciencia','Ansiosa, agitada'],['Perfusión','Pálida, fría, sudorosa'],['Pulso','118 lpm'],['PA sistólica','86 mmHg'],['Índice de choque','FC ÷ PAS = 1,37']],
-    type:'opts',opts:[['Sin shock: pérdida de 500 a 1000 ml',0],['Shock leve: pérdida de 1000 a 1500 ml',0],['Shock moderado: pérdida de 1500 a 2000 ml',1],['Shock severo: pérdida mayor de 2000 ml',0]]},
-   {n:'Reanimación inicial',tag:'',cap:'Monitor',vis:MON([['PA','86/54',1],['FC','118',1],['FR','24',1],['T °C','36,0'],['SatO₂','95 %'],['Dolor','8/10',1]],'Sigue pálida y fría. El ginecólogo indica cirugía urgente.'),
-    q:'Inicien la reanimación del shock mientras se prepara el quirófano.',
-    data:[['Oxígeno','Pregunten si ya está'],['Posición','Supina']],
-    type:'pick',groups:[['Oxígeno',['No por ahora','Sí'],'Sí'],['Accesos venosos de 16 a 18 G',['1','2'],'2'],['Líquido',['Dextrosa al 5 %','Cristaloide tibio en bolo'],'Cristaloide tibio en bolo']]},
-   {n:'Sonda vesical',tag:'Fase 04 · Dispositivos',cap:'Tras 1000 ml',vis:MON([['PA','96/60'],['FC','110',1],['FR','22',1],['T °C','36,0'],['SatO₂','97 %'],['Dolor','7/10',1]],'Mejora un poco tras 1000 ml. Falta la sonda vesical para medir la diuresis.'),
-    q:'Pongan los pasos de la sonda vesical en orden. Si se equivocan, la tarjeta se pone roja.',
-    data:[['Alergias','Pregunten antes de empezar'],['Sonda','14 a 16 Fr']],
-    type:'order',steps:['Verificar la indicación, explicar y preguntar alergias (látex)','Higiene de manos y preparar el material','Posición supina con piernas flexionadas y aseo genital','Guantes estériles y campo','Separar los labios, limpiar e introducir hasta que salga orina, y 2 a 3 cm más','Inflar el balón, retraer suave y conectar el sistema cerrado','Fijar al muslo, bolsa bajo la vejiga y registrar']},
-   {n:'Transfusión',tag:'',cap:'Antes de transfundir',vis:MON([['PA','94/58',1],['FC','112',1],['FR','22',1],['T °C','36,1'],['SatO₂','97 %'],['Hemoglobina','7,8 g/dl',1]],'El ginecólogo ordena 2 unidades de glóbulos rojos O positivo. Llega la primera unidad del banco de sangre.'),
-    q:'Llegó la primera unidad de glóbulos rojos. Marquen todo lo que deben hacer para transfundirla con seguridad, y nada más.',
-    data:[['Orden médica','2 unidades de glóbulos rojos'],['Grupo de Daniela','O positivo'],['Unidad','O positivo, vence en 12 días, bolsa íntegra']],
-    type:'multi',items:[['Verificar orden médica y consentimiento para transfusión',1],['Verificar en la cama, entre dos profesionales, nombre, documento, grupo y Rh de la paciente y de la unidad',1],['Revisar la unidad: fecha de vencimiento, integridad de la bolsa y aspecto',1],['Usar equipo con filtro y solo solución salina al 0,9 % en la misma vía',1],['Tomar signos vitales antes de iniciar y vigilar de cerca los primeros 15 minutos',1],['Pasarla junto con dextrosa al 5 % por la misma vía',0],['Calentar la unidad en el microondas',0],['Agregar medicamentos dentro de la bolsa',0]]},
-   {n:'Prequirúrgico',tag:'Fase 05 · Lista para quirófano',cap:'Hallazgos quirúrgicos de referencia',vis:`<div class="gal gv">${MON([['PA','98/62'],['FC','106',1],['FR','20'],['T °C','36,3'],['SatO₂','98 %'],['Orina','20 ml']],'')}<img src="img/cirugia.jpg" alt="Hallazgos quirúrgicos de un embarazo ectópico"></div>`,
-    q:'Marquen todo lo que debe estar listo antes de que Daniela salga a quirófano, y nada más.',
-    data:[['Consentimiento','Pregunten'],['Última comida','Pregunten']],
-    type:'multi',items:[['Consentimiento informado firmado',1],['Retiro de joyas, prótesis y esmalte',1],['Ayuno verificado',1],['Pruebas cruzadas y reserva de sangre',1],['Alergias registradas en la manilla',1],['Darle líquidos por boca para que no se deshidrate',0],['Tricotomía con cuchilla',0],['Retirar la sonda vesical antes de salir',0]]}
-
-  ]}
+ 1:{name:'Sala 1 · Trabajo de parto normal',sits:{
+  1:{who:'Valentina · primigestante',tx:'Valentina, 19 años, primigestante.\nFUM: 8 de febrero de 2026. Hoy: 10 de noviembre de 2026.\nContracciones desde hace 8 horas.\nObjetivo: madre y bebé estables al final de la primera hora.',
+   ph:S1PH({nombre:'Valentina, 19 años',fum:'8 de febrero de 2026',extra:'Primer embarazo',anam:'primer embarazo. No ha tenido partos, abortos, cesáreas, ectópicos ni mortinatos.',fo:[1,0,0,0,0,0,0],
+    eg:[['38 + 2 semanas',0],['39 + 2 semanas',1],['40 + 2 semanas',0]],fpp:[['8 de noviembre de 2026',0],['15 de noviembre de 2026',1],['22 de noviembre de 2026',0]],
+    membranas:'Íntegras',
+    stages:STG([['Minuto 1',88,118,76,18,98,36.8,140,3,'Dilatación 5 cm · borramiento 80 % · estación −2 · 3 contracciones en 10 min de 40 s'],['Minuto 2',92,120,78,20,98,36.8,142,4,'Dilatación 6 cm · borramiento 90 % · estación −1 · 4 contracciones en 10 min de 45 s'],['Minuto 3',96,122,78,20,98,36.9,138,4,'Dilatación 8 cm · borramiento 100 % · estación 0 · rompe membranas, líquido claro'],['Minuto 4',100,124,80,22,98,36.9,132,5,'Dilatación 10 cm · estación +2 · 5 contracciones en 10 min de 60 s · deseo de pujar']]),
+    tpOpts:[['Esperar dos horas más en la sala antes de valorar otra vez el cuello',0],['Preparar el expulsivo: dilatación completa, estación +2 y FCF tranquilizadora',1],['Iniciar oxitocina para acelerar la dilatación que todavía está incompleta',0],['Pedir que puje con fuerza desde ahora aunque falte borrar el cuello',0]],
+    fcfExp:'128 lpm',apgar:8,apgarData:[['Frecuencia cardíaca','140 lpm'],['Respiración','Llanto vigoroso'],['Tono','Alguna flexión'],['Irritabilidad','Llora al estímulo'],['Color','Manos y pies azulados']],rnPinz:'Vigoroso, piel con piel',
+    alumQ:'Nació el bebé y Valentina no tiene vía venosa. Según la Resolución 3280, ¿qué uterotónico, dosis y vía usan para el manejo activo?',alumData:[['Vía venosa','No tiene'],['Hora del nacimiento','02:41']],
+    alumOpts:[['Oxitocina 10 UI por vía intramuscular después del nacimiento',1],['Oxitocina 20 UI en bolo intravenoso rápido por una vena nueva',0],['Metilergometrina 0,2 mg intramuscular como primera elección',0],['Esperar la placenta sin uterotónico y aplicar solo si sangra',0]]})},
+  2:{who:'Camila · multípara',tx:'Camila, 34 años, multípara.\nFUM: 2 de febrero de 2026. Hoy: 10 de noviembre de 2026.\nContracciones desde hace 4 horas, con goteo de lactato de Ringer.\nObjetivo: madre y bebé estables al final de la primera hora.',
+   ph:S1PH({nombre:'Camila, 34 años',fum:'2 de febrero de 2026',extra:'Vía venosa con lactato de Ringer',anam:'cuarto embarazo. Tuvo un parto vaginal hace 8 años (hijo vivo), un aborto espontáneo a las 10 semanas hace 5 años y un parto vaginal a las 38 semanas con mortinato hace 3 años. No ha tenido cesáreas ni ectópicos.',fo:[4,2,1,0,0,1,1],
+    eg:[['39 + 1 semanas',0],['40 + 1 semanas',1],['41 + 1 semanas',0]],fpp:[['2 de noviembre de 2026',0],['9 de noviembre de 2026',1],['16 de noviembre de 2026',0]],
+    membranas:'Rotas hace 1 hora, líquido claro',
+    stages:STG([['Minuto 1',90,116,74,18,98,36.7,138,4,'Dilatación 5 cm · borramiento 90 % · estación −2 · 4 contracciones en 10 min de 45 s'],['Minuto 2',94,118,76,20,98,36.8,140,4,'Dilatación 7 cm · borramiento 100 % · estación −1'],['Minuto 3',98,122,78,22,98,36.8,134,5,'Dilatación 9 cm · estación +1 · 5 contracciones en 10 min de 55 s'],['Minuto 4',102,124,80,22,98,36.9,128,5,'Dilatación 10 cm · estación +3 · deseo de pujar']]),
+    tpOpts:[['Esperar dos horas más en la sala antes de valorar otra vez el cuello',0],['Preparar el expulsivo: dilatación completa, estación +3 y FCF tranquilizadora',1],['Aumentar el goteo de líquidos para acelerar la salida de la cabeza',0],['Trasladar a cesárea porque ya tuvo un mortinato en el parto anterior',0]],
+    fcfExp:'124 lpm',apgar:6,apgarData:[['Frecuencia cardíaca','110 lpm'],['Respiración','Irregular'],['Tono','Alguna flexión'],['Irritabilidad','Mueca'],['Color','Manos y pies azulados']],rnPinz:'Llora a los 40 segundos tras secado y estímulo',
+    alumQ:'Nació el bebé y Camila tiene vía venosa con lactato de Ringer. Según la Resolución 3280 y la guía colombiana, ¿qué opción es correcta?',alumData:[['Vía venosa','Permeable'],['Hora del nacimiento','03:12']],
+    alumOpts:[['Oxitocina 5 UI intravenosa lenta o 10 UI intramuscular',1],['Oxitocina 20 UI en bolo intravenoso rápido sin diluir',0],['Metilergometrina 0,2 mg intravenosa como primera elección',0],['Retirar la vía y esperar la placenta sin uterotónico',0]]})}}},
+ 2:{name:'Sala 2 · Shock hipovolémico por ectópico roto',sits:{}}
 };
+const ATLS=`<div class="shk"><table><thead><tr><th>Parámetro</th><th>Grado I</th><th>Grado II</th><th>Grado III</th><th>Grado IV</th></tr></thead><tbody>
+<tr><th>Pérdida</th><td>&lt; 750 ml<br><small>&lt; 15 %</small></td><td>750–1500 ml<br><small>15–30 %</small></td><td>1500–2000 ml<br><small>30–40 %</small></td><td>&gt; 2000 ml<br><small>&gt; 40 %</small></td></tr>
+<tr><th>FC</th><td>&lt; 100</td><td>100–120</td><td>120–140</td><td>&gt; 140</td></tr>
+<tr><th>PA</th><td>Normal</td><td>Normal</td><td>Disminuida</td><td>Disminuida</td></tr>
+<tr><th>Presión de pulso</th><td>Normal o ↑</td><td>Disminuida</td><td>Disminuida</td><td>Disminuida</td></tr>
+<tr><th>FR</th><td>14–20</td><td>20–30</td><td>30–40</td><td>&gt; 35</td></tr>
+<tr><th>Diuresis ml/h</th><td>&gt; 30</td><td>20–30</td><td>5–15</td><td>Mínima</td></tr>
+<tr><th>Estado mental</th><td>Levemente ansiosa</td><td>Moderadamente ansiosa</td><td>Ansiosa, confusa</td><td>Confusa, letárgica</td></tr>
+<tr class="shk-tx"><th>Reposición</th><td>Cristaloides</td><td>Cristaloides</td><td>Cristaloides y sangre</td><td>Cristaloides y sangre</td></tr></tbody></table></div>`;
+const S2PH=(d)=>[
+ {n:'Ingreso',cap:'Monitor',live:{},stages:[{label:'Ingreso',v:d.v0,note:d.n0}],
+  q:`Anamnesis: ${d.anam} Armen la fórmula obstétrica.`,
+  data:[['FUM',d.fum],['Fecha de hoy',HOY],['Compresas',d.compresas],['Alergias','Pregunten']],
+  type:'formula',ans:d.fo},
+ {n:'Grado de shock',cap:'Clasificación de la hemorragia (ATLS)',vis:`<div class="gal gv2"><div class="card-pt"><b>${d.nombre} ahora</b>${d.chips.map(c=>`<span>${c}</span>`).join('')}</div><div class="labs">${d.labs}</div>${ATLS}</div>`,
+  q:'Comparen los valores de la paciente con la tabla. ¿Qué grado de shock hipovolémico tiene?',
+  data:[['Diuresis',d.diuresis],['Presión de pulso',d.pp],['Estado mental',d.mental]],
+  type:'opts',opts:[['Grado I: pérdida menor de 750 ml',0],['Grado II: pérdida de 750 a 1500 ml',0],['Grado III: pérdida de 1500 a 2000 ml',d.grado===3?1:0],['Grado IV: pérdida mayor de 2000 ml',d.grado===4?1:0]]},
+ {n:'Reanimación inicial',cap:'Monitor',live:{},stages:[{label:'Ahora',v:d.v0,note:'<b>Actividades del equipo:</b> monitorización · dos accesos venosos · muestras y reserva de sangre · sonda vesical con diuresis horaria · abrigo · conteo de compresas'}],
+  q:'Inicien la reanimación según el grado de shock.',
+  data:[['Peso',d.peso],['Banco de sangre','Unidades disponibles']],
+  type:'pick',groups:[['Oxígeno',['No por ahora','Sí, para SatO₂ mayor de 94 %'],'Sí, para SatO₂ mayor de 94 %'],['Accesos venosos de 16 a 18 G',['1','2'],'2'],['Reposición',['Solo cristaloides','Cristaloides y sangre'],'Cristaloides y sangre']]},
+ {n:'Transfusión',cap:'Monitor',live:{},stages:[{label:'Tras 1000 ml',v:d.v1,note:`<b>Llegan glóbulos rojos ${d.grupo}.</b> ${d.labsShort}`}],
+  q:'Llegó la primera unidad. Marquen todo lo que deben hacer para transfundirla con seguridad, y nada más.',
+  data:[['Grupo de la paciente',d.grupo],['Unidad',`${d.grupo}, vigente, bolsa íntegra`]],
+  type:'multi',items:[['Verificar orden médica y consentimiento para la transfusión',1],['Verificar en la cama, entre dos profesionales, identidad, grupo y Rh',1],['Revisar la unidad: vencimiento, integridad de la bolsa y aspecto',1],['Usar equipo con filtro y solo solución salina al 0,9 % en la vía',1],['Tomar signos antes de iniciar y vigilar de cerca los primeros 15 minutos',1],['Pasarla junto con dextrosa al 5 % por la misma vía',0],['Calentar la unidad en el microondas antes de conectarla',0],['Agregar medicamentos dentro de la bolsa de sangre',0]]},
+ {n:'Descompensación',cap:'Monitor',live:{},stages:[{label:'Ahora',v:d.v2,note:`<b>PAM ${d.pam} mmHg</b> pese a cristaloides y sangre. Peso ${d.peso}. Norepinefrina: 4 mg en 250 ml (16 mcg/ml).`}],
+  q:`La presión no sube. El médico indica soporte vasopresor mientras ${d.nombre.split(',')[0]} pasa a cirugía. Elijan el fármaco y la velocidad de la bomba para 0,1 mcg/kg/min.`,
+  data:[['Peso',d.peso],['Dilución','4 mg en 250 ml = 16 mcg/ml'],['Fórmula','mcg/kg/min × kg × 60 ÷ 16']],
+  type:'pick',groups:[['Fármaco',['Dobutamina (inotrópico)','Norepinefrina (vasopresor)'],'Norepinefrina (vasopresor)'],['Velocidad de la bomba',d.velOpts,d.vel]]},
+ {n:'Paso a salas',cap:'Paso a cirugía',vis:`<div class="gal gh"><img src="img/mesa.jpg" alt="Paciente en la mesa quirúrgica" style="object-fit:cover"><img src="img/ectopico.jpg" alt="Localizaciones del embarazo ectópico"></div>`,
+  q:`El ectópico está roto en la porción ampular de la trompa derecha. ¿Cuál es la conducta para ${d.nombre.split(',')[0]}?`,
+  data:[['Localización','Ampular, trompa derecha (cerca del 80 % de los ectópicos)'],['Estado','Con norepinefrina y sangre en curso']],
+  type:'opts',opts:[['Salpingectomía urgente en salas de cirugía con soporte y sangre en curso',1],['Metotrexato intramuscular y observación en hospitalización por 24 horas',0],['Esperar en urgencias a que la β-hCG baje antes de decidir la cirugía',0],['Trasladar a la unidad de cuidado intensivo y operar al día siguiente',0]]}
+];
+M[2].sits[1]={who:'Sofía · primigestante',tx:'Sofía, 22 años, primigestante.\nFUM: 19 de septiembre de 2026. Hoy: 10 de noviembre de 2026.\nDolor súbito en la fosa ilíaca derecha y mareo.\nObjetivo: tratar el shock y llevarla estable a cirugía.',
+ ph:S2PH({nombre:'Sofía, 22 años',fum:'19 de septiembre de 2026',compresas:'3 compresas empapadas en la última hora',anam:'primer embarazo. Amenorrea de 7 semanas. No ha tenido partos, abortos, cesáreas, ectópicos ni mortinatos.',fo:[1,0,0,0,0,0,0],
+  v0:{hr:128,sys:84,dia:56,rr:32,spo2:90,temp:36.0},n0:'<b>Ansiosa y confusa.</b> Pálida, fría, sudorosa. Llenado capilar de 4 segundos.',
+  chips:['Ansiosa, confusa','FC 128','PA 84/56','FR 32','Diuresis 10 ml/h'],labs:'<span><b>Hemoglobina</b> 8,2 g/dl <i>ref. 12–16</i></span><span><b>Hematocrito</b> 25 % <i>ref. 36–46</i></span><span><b>Grupo</b> O +</span>',
+  labsShort:'Hemoglobina 8,2 g/dl (ref. 12–16) · Hematocrito 25 % (ref. 36–46).',
+  diuresis:'10 ml/h',pp:'28 mmHg, disminuida',mental:'Ansiosa y confusa',grado:3,peso:'60 kg',grupo:'O positivo',
+  v1:{hr:122,sys:86,dia:54,rr:30,spo2:95,temp:36.1},v2:{hr:134,sys:74,dia:40,rr:32,spo2:94,temp:36.0},pam:51,
+  velOpts:['11,3 ml/h','22,5 ml/h','45 ml/h'],vel:'22,5 ml/h'})};
+M[2].sits[2]={who:'Daniela · multípara',tx:'Daniela, 34 años, multípara.\nFUM: 15 de septiembre de 2026. Hoy: 10 de noviembre de 2026.\nDolor súbito en la fosa ilíaca derecha, irradiado al hombro, y desmayo.\nObjetivo: tratar el shock y llevarla estable a cirugía.',
+ ph:S2PH({nombre:'Daniela, 34 años',fum:'15 de septiembre de 2026',compresas:'4 compresas empapadas en la última hora',anam:'quinto embarazo, amenorrea de 8 semanas. Tuvo un parto vaginal hace 12 años (hijo vivo), una cesárea hace 6 años (hijo vivo), un aborto espontáneo a las 9 semanas hace 4 años y un ectópico en la trompa izquierda hace 2 años, tratado con salpingectomía izquierda. No ha tenido mortinatos.',fo:[5,1,1,1,1,0,2],
+  v0:{hr:146,sys:68,dia:40,rr:38,spo2:86,temp:35.6},n0:'<b>Confusa y letárgica.</b> Muy pálida, fría, sudorosa. Llenado capilar mayor de 4 segundos.',
+  chips:['Confusa, letárgica','FC 146','PA 68/40','FR 38','Diuresis mínima'],labs:'<span><b>Hemoglobina</b> 6,4 g/dl <i>ref. 12–16</i></span><span><b>Hematocrito</b> 19 % <i>ref. 36–46</i></span><span><b>Grupo</b> A +</span>',
+  labsShort:'Hemoglobina 6,4 g/dl (ref. 12–16) · Hematocrito 19 % (ref. 36–46).',
+  diuresis:'Mínima, menos de 5 ml/h',pp:'28 mmHg, disminuida',mental:'Confusa y letárgica',grado:4,peso:'70 kg',grupo:'A positivo',
+  v1:{hr:138,sys:72,dia:42,rr:34,spo2:92,temp:35.8},v2:{hr:142,sys:70,dia:38,rr:34,spo2:93,temp:35.8},pam:49,
+  velOpts:['13,1 ml/h','26,3 ml/h','52,5 ml/h'],vel:'26,3 ml/h'})};
 
-/* Construir diapositivas */
+/* ===== Construcción ===== */
 const deck=$('#deck');
-function phaseHTML(p,i,s){
-  let t='';
-  if(p.type==='formula') t=`<div class="fsteps">${[['G','Gestas'],['P','Partos'],['A','Abortos'],['C','Cesáreas'],['E','Ectópicos'],['M','Mortinatos'],['V','Vivos']].map((x,k)=>`<div class="fst" data-f="${k}"><b>${x[0]}</b><small>${x[1]}</small><output>0</output><div><button type="button" data-d="-1" aria-label="Menos">−</button><button type="button" data-d="1" aria-label="Más">+</button></div></div>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
-  if(p.type==='opts') t=`<div class="opts">${p.opts.map((o,k)=>`<button type="button" data-o="${k}">${o[0]}</button>`).join('')}</div>`;
-  if(p.type==='num') t=`<div class="pick nums">${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<button type="button" aria-pressed="false" data-n="${n}">${n}</button>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
-  if(p.type==='range') t=`<div class="range"><div class="big" data-rv>00:00</div><input type="range" min="0" max="300" step="15" value="0" aria-label="Minutos desde el nacimiento" data-r><div class="row"><button class="btn" type="button" data-try>Pinzar aquí</button><span class="hint">0 a 5 minutos desde el nacimiento</span></div></div>`;
-  if(p.type==='pick') t=`<div class="range">${p.groups.map((g,k)=>`<span class="grp-l">${g[0]}</span><div class="pick" data-g="${k}">${g[1].map(x=>`<button type="button" aria-pressed="false">${x}</button>`).join('')}</div>`).join('')}<div class="row"><button class="btn" type="button" data-try>Verificar</button></div></div>`;
-  if(p.type==='order') t=`<div class="two" style="gap:12px"><div class="ordl" data-pool></div><ol class="ordd" data-done></ol></div>`;
-  if(p.type==='multi') t=`<div class="multi">${p.items.map((x,k)=>`<button type="button" aria-pressed="false" data-m="${k}"><i></i>${x[0]}</button>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
-  const wide=(p.type==='order'||p.type==='multi');
-  return `<div class="in">
-   <div class="two${wide?' wide':''}"><div class="lcol"><h2 class="r" style="--i:0">${i+1}. ${p.n}</h2><div class="holo r" style="--i:1">${p.vis}<span class="cap">${p.cap}</span></div></div>
+const FOL=[['G','Gestas'],['P','Partos'],['A','Abortos'],['C','Cesáreas'],['E','Ectópicos'],['M','Mortinatos'],['V','Vivos']];
+const foHTML=()=>`<div class="fsteps">${FOL.map((x,k)=>`<div class="fst" data-f="${k}"><b>${x[0]}</b><small>${x[1]}</small><output>0</output><div><button type="button" data-d="-1" aria-label="Menos">−</button><button type="button" data-d="1" aria-label="Más">+</button></div></div>`).join('')}</div>`;
+function phaseHTML(p,i,s,t,id){
+  let task='';
+  if(p.type==='formula') task=foHTML()+`<div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
+  if(p.type==='ingreso') task=foHTML()+`<span class="grp-l">Edad gestacional</span><div class="pick" data-g="eg">${p.eg.map(o=>`<button type="button" aria-pressed="false">${o[0]}</button>`).join('')}</div><span class="grp-l">FPP</span><div class="pick" data-g="fpp">${p.fpp.map(o=>`<button type="button" aria-pressed="false">${o[0]}</button>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
+  if(p.type==='opts') task=`<div class="opts">${p.opts.map((o,k)=>`<button type="button" data-o="${k}">${o[0]}</button>`).join('')}</div>`;
+  if(p.type==='num') task=`<div class="pick nums">${[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<button type="button" aria-pressed="false" data-n="${n}">${n}</button>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
+  if(p.type==='range') task=`<div class="range"><div class="big" data-rv>00:00</div><input type="range" min="0" max="300" step="15" value="0" aria-label="Minutos desde el nacimiento" data-r><div class="row"><button class="btn" type="button" data-try>Pinzar aquí</button><span class="hint">0 a 5 minutos desde el nacimiento</span></div></div>`;
+  if(p.type==='pick') task=`<div class="range">${p.groups.map((g,k)=>`<span class="grp-l">${g[0]}</span><div class="pick" data-g="${k}">${g[1].map(x=>`<button type="button" aria-pressed="false">${x}</button>`).join('')}</div>`).join('')}<div class="row"><button class="btn" type="button" data-try>Verificar</button></div></div>`;
+  if(p.type==='multi') task=`<div class="multi">${p.items.map((x,k)=>`<button type="button" aria-pressed="false" data-m="${k}"><i></i>${x[0]}</button>`).join('')}</div><div class="row"><button class="btn" type="button" data-try>Verificar</button></div>`;
+  const wide=(p.type==='multi'||p.type==='ingreso');
+  let vis=p.vis||'';
+  if(p.live){ vis=liveHTML(id,p.live)+(p.stages.length>1?`<div class="stg">${p.stages.map((x,k)=>`<button type="button" data-st="${k}" aria-pressed="${k===0}">${x.label}</button>`).join('')}${p.reveal?`<button type="button" class="rev" data-reveal>Ver dilataciones</button>`:''}</div>`:''); }
+  return `<div class="in"><div class="two${wide?' wide':''}"><div class="lcol"><h2 class="r" style="--i:0">${i+1}. ${p.n}</h2><div class="holo r${p.live?' live':''}" style="--i:1">${vis}${p.live?'':`<span class="cap">${p.cap}</span>`}</div></div>
    <div class="panel prob r" style="--i:2"><span class="tag mag">Problema</span><p class="q">${p.q}</p><span class="tag">Datos que pueden pedir</span>
-   <div class="data">${p.data.map(d=>`<button type="button" data-d="${esc(d[1])}"><b>${d[0]}</b>tocar para ver</button>`).join('')}</div>${t}<p class="msg" data-msg></p></div></div></div>`;
+   <div class="data">${p.data.map(d=>`<button type="button" data-dv="${esc(d[1])}"><b>${d[0]}</b>tocar para ver</button>`).join('')}</div>${task}<p class="msg" data-msg></p></div></div></div>`;
 }
-const state={sala:null,team:null};
-const done={1:[0,0,0,0,0,0],2:[0,0,0,0,0,0]};
-const results={1:[],2:[]};
-for(const s of [1,2]){
-  const m=M[s];
-  deck.insertAdjacentHTML('beforeend',`<section class="slide" id="b${s}" data-s="${s}" aria-label="El caso"><div class="in"><h2 class="r" style="--i:0">El caso</h2><div class="two"><div style="display:flex;flex-direction:column;gap:18px"><div class="panel r" style="--i:1"><div class="tx" data-tx></div></div><div class="rules r" style="--i:2;grid-template-columns:1fr"><div class="rule"><b>01 · CADA FASE SE ABRE AL RESOLVERLA</b><p>El equipo responde el problema de cada fase para pasar a la siguiente.</p></div><div class="rule"><b>02 · LOS DATOS SE PIDEN</b><p>Tocan el dato que necesitan y el docente lo confirma en el simulador.</p></div></div></div><div class="photo r" style="--i:2"><img src="${m.photo}" alt="Simulación con estudiantes de enfermería" style="object-fit:cover"></div></div><div class="row r" style="--i:3"><button class="btn mag" type="button" data-route="${s}">Ver la ruta</button></div></div></section>`);
-  deck.insertAdjacentHTML('beforeend',`<section class="slide" id="m${s}" data-s="${s}" aria-label="Ruta"><div class="in"><div class="phase-head r" style="--i:0"><div><h2>Ruta de atención</h2></div></div><div class="map panel r" style="--i:1"><svg viewBox="0 0 1100 300" data-map role="img" aria-label="Ruta de seis fases"></svg></div><p class="hint r" style="--i:2">Toquen una fase abierta para entrar. Las cumplidas se encienden en verde.</p></div></section>`);
-  m.ph.forEach((p,i)=>deck.insertAdjacentHTML('beforeend',`<section class="slide phase" id="p${s}-${i}" data-s="${s}" data-p="${i}" aria-label="Fase ${i+1}">${phaseHTML(p,i,s)}</section>`));
-  deck.insertAdjacentHTML('beforeend',`<section class="slide" id="e${s}" data-s="${s}" aria-label="Atención completa"><div class="in"><h2><span class="glow">Atención completa</span></h2><div class="two"><div class="panel"><span class="tag">Tabla de tiempos</span><div class="board" data-board style="margin-top:14px"></div><div class="row" style="margin-top:14px"><button class="btn sm" type="button" data-home>Volver al inicio</button></div></div><div class="panel"><span class="tag mag">Antes de salir de la sala</span><div class="deb" data-deb style="margin-top:14px;grid-template-columns:repeat(2,minmax(0,1fr))"></div></div></div></div></section>`);
+const state={sala:null,sit:null,team:null};
+const done={};
+const results={};
+for(const s of [1,2]) for(const t of [1,2]){
+  const m=M[s], c=m.sits[t], key=s+'-'+t; done[key]=c.ph.map(()=>0); results[key]=[];
+  deck.insertAdjacentHTML('beforeend',`<section class="slide" id="b${s}${t}" data-k="${key}" aria-label="El caso"><div class="in"><h2 class="r" style="--i:0">Situación ${t}: el caso</h2><div class="two"><div style="display:flex;flex-direction:column;gap:18px"><div class="panel r" style="--i:1"><div class="tx" data-tx></div></div><div class="rules r" style="--i:2;grid-template-columns:1fr"><div class="rule"><b>CADA FASE SE ABRE AL RESOLVERLA</b><p>El equipo de tres responde el problema de cada fase para pasar a la siguiente.</p></div><div class="rule"><b>LOS DATOS SE PIDEN</b><p>Tocan el dato que necesitan y el docente lo confirma en el simulador.</p></div></div></div><div class="photo r" style="--i:2"><img src="${s===1?'img/simu2.jpg':'img/mesa.jpg'}" alt="Simulación" style="object-fit:cover"></div></div><div class="row r" style="--i:3"><button class="btn mag" type="button" data-route="${key}">Ver la ruta</button></div></div></section>`);
+  deck.insertAdjacentHTML('beforeend',`<section class="slide" id="m${s}${t}" data-k="${key}" aria-label="Ruta"><div class="in"><h2 class="r" style="--i:0">Ruta de atención</h2><div class="map panel r" style="--i:1"><svg viewBox="0 0 1100 300" data-map role="img" aria-label="Ruta de fases"></svg></div><p class="hint r" style="--i:2">Toquen una fase abierta para entrar. Las cumplidas se encienden.</p></div></section>`);
+  c.ph.forEach((p,i)=>{ const id=`p${s}${t}-${i}`; deck.insertAdjacentHTML('beforeend',`<section class="slide phase" id="${id}" data-k="${key}" data-p="${i}" aria-label="Fase ${i+1}">${phaseHTML(p,i,s,t,id)}</section>`); });
+  deck.insertAdjacentHTML('beforeend',`<section class="slide" id="e${s}${t}" data-k="${key}" aria-label="Atención completa"><div class="in"><h2><span class="glow">Atención completa</span></h2><div class="two"><div class="panel"><span class="tag">Tabla de tiempos</span><div class="board" data-board style="margin-top:14px"></div><div class="row" style="margin-top:14px"><button class="btn sm" type="button" data-home>Volver al inicio</button></div></div><div class="panel"><span class="tag mag">Antes de salir de la sala</span><div class="deb" data-deb style="margin-top:14px;grid-template-columns:repeat(2,minmax(0,1fr))"></div></div></div></div></section>`);
 }
+deck.insertAdjacentHTML('beforeend',`<section class="slide" id="s-refs" aria-label="Referencias"><div class="in"><h2 class="r" style="--i:0">Referencias</h2><ol class="refs r" style="--i:1"><li>Organización Mundial de la Salud. Recomendaciones de la OMS: cuidados durante el parto para una experiencia de parto positiva. Ginebra: OMS; 2018.</li><li>Cunningham FG, Leveno KJ, Dashe JS, Hoffman BL, Spong CY, Casey BM. Trabajo de parto normal. En: Williams Obstetricia. 26.ª ed. México: Editorial Médica Panamericana; 2022. p. 409-33.</li><li>American Academy of Pediatrics Committee on Fetus and Newborn, American College of Obstetricians and Gynecologists Committee on Obstetric Practice. The Apgar score. Pediatrics. 2015;136(4):819-22.</li><li>Weiner GM, editor. Textbook of neonatal resuscitation. 8th ed. Itasca (IL): American Academy of Pediatrics; 2021.</li><li>World Health Organization. Guideline: delayed umbilical cord clamping for improved maternal and infant health and nutrition outcomes. Geneva: WHO; 2014.</li><li>Ministerio de Salud y Protección Social, Colciencias. Guía de práctica clínica para la prevención, detección temprana y tratamiento de las complicaciones del embarazo, parto o puerperio. Bogotá: MinSalud; 2013.</li><li>American College of Obstetricians and Gynecologists. ACOG Practice Bulletin No. 193: tubal ectopic pregnancy. Obstet Gynecol. 2018;131(3):e91-103.</li><li>World Health Organization. WHO guidelines for safe surgery 2009: safe surgery saves lives. Geneva: WHO; 2009.</li><li>American College of Surgeons Committee on Trauma. ATLS: Advanced Trauma Life Support. Student course manual. 10th ed. Chicago: ACS; 2018.</li><li>Ministerio de Salud y Protección Social. Resolución 3280 de 2018: lineamientos técnicos y operativos de la Ruta Integral de Atención en Salud Materno Perinatal. Bogotá: MinSalud; 2018.</li><li>Gould CV, Umscheid CA, Agarwal RK, Kuntz G, Pegues DA; Healthcare Infection Control Practices Advisory Committee. Guideline for prevention of catheter-associated urinary tract infections 2009. Atlanta: CDC; 2009.</li></ol></div></section>`);
 
-deck.insertAdjacentHTML('beforeend',`<section class="slide" id="s-refs" aria-label="Referencias"><div class="in"><h2 class="r" style="--i:0">Referencias</h2><ol class="refs r" style="--i:1"><li>Organización Mundial de la Salud. Recomendaciones de la OMS: cuidados durante el parto para una experiencia de parto positiva. Ginebra: OMS; 2018.</li><li>Cunningham FG, Leveno KJ, Dashe JS, Hoffman BL, Spong CY, Casey BM. Trabajo de parto normal. En: Williams Obstetricia. 26.ª ed. México: Editorial Médica Panamericana; 2022. p. 409-33.</li><li>American Academy of Pediatrics Committee on Fetus and Newborn, American College of Obstetricians and Gynecologists Committee on Obstetric Practice. The Apgar score. Pediatrics. 2015;136(4):819-22.</li><li>Weiner GM, editor. Textbook of neonatal resuscitation. 8th ed. Itasca (IL): American Academy of Pediatrics; 2021.</li><li>World Health Organization. Guideline: delayed umbilical cord clamping for improved maternal and infant health and nutrition outcomes. Geneva: WHO; 2014.</li><li>Ministerio de Salud y Protección Social, Colciencias. Guía de práctica clínica para la prevención, detección temprana y tratamiento de las complicaciones del embarazo, parto o puerperio. Bogotá: MinSalud; 2013.</li><li>American College of Obstetricians and Gynecologists. ACOG Practice Bulletin No. 193: tubal ectopic pregnancy. Obstet Gynecol. 2018;131(3):e91-103.</li><li>World Health Organization. WHO guidelines for safe surgery 2009: safe surgery saves lives. Geneva: WHO; 2009.</li><li>Gould CV, Umscheid CA, Agarwal RK, Kuntz G, Pegues DA; Healthcare Infection Control Practices Advisory Committee. Guideline for prevention of catheter-associated urinary tract infections 2009. Atlanta: CDC; 2009.</li></ol></div></section>`);
-/* Lógica de cada fase */
+/* ===== Lógica ===== */
+const lives={};
 function wireAll(){
   $$('.phase').forEach(sec=>{
-    const s=+sec.dataset.s, i=+sec.dataset.p, p=M[s].ph[i], msg=$('[data-msg]',sec);
-    $$('[data-d]:not([data-d="-1"]):not([data-d="1"])',sec).forEach(b=>b.addEventListener('click',()=>{ if(b.classList.contains('shown')) return; b.classList.add('shown'); b.lastChild.textContent=b.dataset.d; tone(1200,.05,'square',.04); }));
-    const win=()=>{ done[s][i]=1; msg.className='msg ok'; msg.textContent='Correcto. Fase '+(i+1)+' superada.'; okSnd(); const u=$('#unlock'); $('div',u).textContent=i===5?'ATENCIÓN COMPLETA':'FASE SUPERADA'; u.classList.remove('on'); void u.offsetWidth; u.classList.add('on'); drawMap(s); setTimeout(()=>{ if(i===5){ finish(s); goId('e'+s); } else goId('p'+s+'-'+(i+1)); }, reduce?100:1600); };
-    const fail=t=>{ msg.className='msg no'; msg.textContent=t; noSnd(); };
-    if(p.type==='formula'){ $$('.fst',sec).forEach(f=>$$('button',f).forEach(b=>b.addEventListener('click',()=>{ const o=$('output',f); o.textContent=Math.max(0,Math.min(9,+o.textContent+ +b.dataset.d)); tone(900,.04,'square',.04); }))); $('[data-try]',sec).addEventListener('click',()=>{ const v=$$('.fst output',sec).map(o=>+o.textContent); const bad=v.map((x,k)=>x!==p.ans[k]?k:-1).filter(k=>k>=0); if(!bad.length) win(); else fail('Revisen: '+bad.map(k=>'GPACEMV'[k]).join(', ')+'.'); }); }
+    const key=sec.dataset.k, [s,t]=key.split('-').map(Number), i=+sec.dataset.p, p=M[s].sits[t].ph[i], msg=$('[data-msg]',sec);
+    $$('[data-dv]',sec).forEach(b=>b.addEventListener('click',()=>{ if(b.classList.contains('shown')) return; b.classList.add('shown'); b.lastChild.textContent=b.dataset.dv; tone(1200,.05,'square',.04); }));
+    if(p.live){ const L=Live($('[data-live]',sec)); lives[sec.id]=L; sec._live=L; const setStage=k=>{ const st=p.stages[k]; L.set(Object.assign({fcf:0,toco:0},st.v,{note:st.note})); $$('[data-st]',sec).forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.st===k))); }; sec._stage=setStage; $$('[data-st]',sec).forEach(b=>b.addEventListener('click',()=>{ setStage(+b.dataset.st); tone(900,.05,'square',.05); })); setStage(0);
+      const rv=$('[data-reveal]',sec); if(rv) rv.addEventListener('click',()=>{ const lb=$('#lb'); $('img',lb).src=p.reveal; lb.hidden=false; }); }
+    const win=()=>{ done[key][i]=1; msg.className='msg ok'; msg.textContent='Correcto. Fase '+(i+1)+' superada.'; okSnd(); const u=$('#unlock'); const last=i===M[s].sits[t].ph.length-1; $('div',u).textContent=last?'ATENCIÓN COMPLETA':'FASE SUPERADA'; u.classList.remove('on'); void u.offsetWidth; u.classList.add('on'); drawMap(key); setTimeout(()=>{ if(last){ finish(key); goId('e'+s+t); } else goId(`p${s}${t}-${i+1}`); }, reduce?100:1600); };
+    const fail=x=>{ msg.className='msg no'; msg.textContent=x; noSnd(); };
+    const foCheck=()=>{ const v=$$('.fst output',sec).map(o=>+o.textContent); const bad=v.map((x,k)=>x!==p.ans[k]?k:-1).filter(k=>k>=0); return bad.length?'Revisen en la fórmula: '+bad.map(k=>'GPACEMV'[k]).join(', ')+'.':''; };
+    $$('.fst',sec).forEach(f=>$$('button',f).forEach(b=>b.addEventListener('click',()=>{ const o=$('output',f); o.textContent=Math.max(0,Math.min(9,+o.textContent+ +b.dataset.d)); tone(900,.04,'square',.04); })));
+    $$('.pick',sec).forEach(g=>$$('button',g).forEach(b=>b.addEventListener('click',()=>$$('button',g).forEach(x=>x.setAttribute('aria-pressed',String(x===b))))));
+    if(p.type==='formula') $('[data-try]',sec).addEventListener('click',()=>{ const e=foCheck(); e?fail(e):win(); });
+    if(p.type==='ingreso') $('[data-try]',sec).addEventListener('click',()=>{ const e=foCheck(); const eg=$('[data-g="eg"] [aria-pressed="true"]',sec), fp=$('[data-g="fpp"] [aria-pressed="true"]',sec); const errs=[]; if(e) errs.push(e); if(!eg||!p.eg.find(o=>o[0]===eg.textContent&&o[1])) errs.push('Revisen la edad gestacional.'); if(!fp||!p.fpp.find(o=>o[0]===fp.textContent&&o[1])) errs.push('Revisen la FPP.'); errs.length?fail(errs.join(' ')):win(); });
     if(p.type==='opts') $$('[data-o]',sec).forEach(b=>b.addEventListener('click',()=>{ if(p.opts[+b.dataset.o][1]){ b.classList.add('ok'); win(); } else { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); fail('No. Discútanlo y vuelvan a intentar.'); } }));
-    if(p.type==='num'){ $$('.nums button',sec).forEach(b=>b.addEventListener('click',()=>$$('.nums button',sec).forEach(x=>x.setAttribute('aria-pressed',String(x===b))))); $('[data-try]',sec).addEventListener('click',()=>{ const b=$('.nums [aria-pressed="true"]',sec); if(!b) return fail('Elijan un puntaje.'); if(+b.dataset.n===p.ans) win(); else fail('No es ese puntaje. Revisen cada signo.'); }); }
-    if(p.type==='range'){ const r=$('[data-r]',sec), v=$('[data-rv]',sec); const show=()=>{ const t=+r.value; v.textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0'); }; r.addEventListener('input',show); show(); $('[data-try]',sec).addEventListener('click',()=>{ const t=+r.value; if(t>=p.min&&t<=p.max) win(); else fail(t<p.min?'Muy pronto: el bebé está vigoroso.':'Demasiado tarde para lo recomendado.'); }); }
-    if(p.type==='pick'){ $$('[data-g]',sec).forEach(g=>$$('button',g).forEach(b=>b.addEventListener('click',()=>$$('button',g).forEach(x=>x.setAttribute('aria-pressed',String(x===b)))))); $('[data-try]',sec).addEventListener('click',()=>{ const sel=$$('[data-g]',sec).map(g=>{ const b=$('[aria-pressed="true"]',g); return b?b.textContent:null; }); if(sel.includes(null)) return fail('Falta elegir una opción.'); const bad=p.groups.filter((g,k)=>sel[k]!==g[2]).map(g=>g[0].toLowerCase()); if(!bad.length) win(); else fail('Revisen: '+bad.join(', ')+'.'); }); }
-    if(p.type==='multi'){ $$('[data-m]',sec).forEach(b=>b.addEventListener('click',()=>b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true')))); $('[data-try]',sec).addEventListener('click',()=>{ const sel=$$('[data-m]',sec).map(b=>b.getAttribute('aria-pressed')==='true'?1:0); const miss=p.items.filter((x,k)=>x[1]&&!sel[k]).length, extra=p.items.filter((x,k)=>!x[1]&&sel[k]).length; if(!miss&&!extra) win(); else fail((miss?'Falta '+miss+' punto'+(miss>1?'s':'')+'. ':'')+(extra?'Sobra '+extra+'.':'')); }); }
-    if(p.type==='order') sec._resetOrder=()=>{ let n=0; const pool=$('[data-pool]',sec), dn=$('[data-done]',sec); dn.innerHTML=''; const idx=[...p.steps.keys()].sort(()=>Math.random()-.5); pool.innerHTML=idx.map(k=>`<button type="button" data-k="${k}">${p.steps[k]}</button>`).join(''); $$('button',pool).forEach(b=>b.addEventListener('click',()=>{ if(+b.dataset.k===n){ const li=document.createElement('li'); li.textContent=p.steps[n]; dn.appendChild(li); b.remove(); n++; tone(880,.12,'triangle',.12); if(n===p.steps.length) win(); } else { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); fail('Ese no es el siguiente paso.'); } })); };
-    if(sec._resetOrder) sec._resetOrder();
+    if(p.type==='num') $('[data-try]',sec).addEventListener('click',()=>{ const b=$('.nums [aria-pressed="true"]',sec); if(!b) return fail('Elijan un puntaje.'); +b.dataset.n===p.ans?win():fail('No es ese puntaje. Revisen cada signo.'); });
+    if(p.type==='range'){ const r=$('[data-r]',sec), v=$('[data-rv]',sec); const show=()=>{ const x=+r.value; v.textContent=String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0'); }; r.addEventListener('input',show); show(); $('[data-try]',sec).addEventListener('click',()=>{ const x=+r.value; (x>=p.min&&x<=p.max)?win():fail(x<p.min?'Muy pronto.':'Demasiado tarde para lo recomendado.'); }); }
+    if(p.type==='pick') $('[data-try]',sec).addEventListener('click',()=>{ const sel=p.groups.map((g,k)=>{ const b=$(`[data-g="${k}"] [aria-pressed="true"]`,sec); return b?b.textContent:null; }); if(sel.includes(null)) return fail('Falta elegir una opción.'); const bad=p.groups.filter((g,k)=>sel[k]!==g[2]).map(g=>g[0].toLowerCase()); bad.length?fail('Revisen: '+bad.join(', ')+'.'):win(); });
+    if(p.type==='multi'){ $$('[data-m]',sec).forEach(b=>b.addEventListener('click',()=>b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true')))); $('[data-try]',sec).addEventListener('click',()=>{ const sel=$$('[data-m]',sec).map(b=>b.getAttribute('aria-pressed')==='true'?1:0); const miss=p.items.filter((x,k)=>x[1]&&!sel[k]).length, extra=p.items.filter((x,k)=>!x[1]&&sel[k]).length; (!miss&&!extra)?win():fail((miss?'Falta '+miss+'. ':'')+(extra?'Sobra '+extra+'.':'')); }); }
   });
-  $$('[data-route]').forEach(b=>b.addEventListener('click',()=>goId('m'+b.dataset.route)));
+  $$('[data-route]').forEach(b=>b.addEventListener('click',()=>{ const [s,t]=b.dataset.route.split('-'); goId('m'+s+t); }));
   $$('[data-home]').forEach(b=>b.addEventListener('click',()=>goId('s-ini')));
   const DEB=[['01','¿Qué sintieron?','Reacciones del equipo y de los observadores.'],['02','¿Qué pasó?','La historia de la paciente en una frase.'],['03','¿Por qué decidieron así?','Lo que vieron los observadores y lo que harían diferente.'],['04','¿Qué se llevan?','Una acción de enfermería para la práctica real.']];
   $$('[data-deb]').forEach(d=>{ d.innerHTML=DEB.map(x=>`<button type="button" aria-expanded="false"><b>${x[0]}</b><span>${x[1]}</span><small>${x[2]}</small></button>`).join(''); $$('button',d).forEach(b=>b.addEventListener('click',()=>b.setAttribute('aria-expanded',String(b.getAttribute('aria-expanded')!=='true')))); });
 }
-function resetSala(s){
-  done[s].fill(0);
-  $$('.phase[data-s="'+s+'"]').forEach(sec=>{
+function resetKey(key){
+  done[key].fill(0);
+  $$(`.phase[data-k="${key}"]`).forEach(sec=>{
     $$('.data button',sec).forEach(b=>{ b.classList.remove('shown'); b.lastChild.textContent='tocar para ver'; });
     $$('.opts button',sec).forEach(b=>b.classList.remove('ok','no'));
     $$('.pick button,.multi button',sec).forEach(b=>b.setAttribute('aria-pressed','false'));
     $$('.fst output',sec).forEach(o=>o.textContent='0');
     const r=$('[data-r]',sec); if(r){ r.value=0; r.dispatchEvent(new Event('input')); }
     const m=$('[data-msg]',sec); m.textContent=''; m.className='msg';
-    if(sec._resetOrder) sec._resetOrder();
+    if(sec._stage) sec._stage(0);
   });
-  drawMap(s);
+  drawMap(key);
 }
-
-/* Mapa */
-const NX=[90,270,450,630,810,990];
-function drawMap(s){
-  const svg=$('#m'+s+' [data-map]'), d=done[s]; let h='';
-  for(let k=0;k<5;k++) h+=`<path class="path${d[k]?' lit':''}" d="M${NX[k]+40} ${k%2?190:110} C${NX[k]+90} ${k%2?190:110} ${NX[k+1]-90} ${k%2?110:190} ${NX[k+1]-40} ${k%2?110:190}"/>`;
-  M[s].ph.forEach((p,k)=>{ const y=k%2?190:110, open=k===0||d[k-1]; h+=`<g class="node${d[k]?' done':open?' open':''}" data-k="${k}" tabindex="0" role="button" aria-label="Fase ${k+1}: ${p.n}"><circle class="ring" cx="${NX[k]}" cy="${y}" r="40"/><text class="num" x="${NX[k]}" y="${y-4}" text-anchor="middle">0${k+1}</text><path class="lock" d="M${NX[k]-7} ${y+6} h14 v12 h-14z M${NX[k]-4} ${y+6} v-4 a4 4 0 0 1 8 0 v4" fill="none" stroke="#9AABC4" stroke-width="2"/>${d[k]?`<path d="M${NX[k]-9} ${y+10} l6 6 l12 -12" fill="none" stroke="#1C5FC6" stroke-width="3" stroke-linecap="round"/>`:''}<text x="${NX[k]}" y="${y+(k%2?66:-56)}" text-anchor="middle">${p.n}</text></g>`; });
+function drawMap(key){
+  const [s,t]=key.split('-'), svg=$(`#m${s}${t} [data-map]`), d=done[key], ph=M[s].sits[t].ph, n=ph.length;
+  const NX=ph.map((_,k)=>80+k*(940/(n-1))); let h='';
+  for(let k=0;k<n-1;k++) h+=`<path class="path${d[k]?' lit':''}" d="M${NX[k]+40} ${k%2?190:110} C${NX[k]+80} ${k%2?190:110} ${NX[k+1]-80} ${k%2?110:190} ${NX[k+1]-40} ${k%2?110:190}"/>`;
+  ph.forEach((p,k)=>{ const y=k%2?190:110, open=k===0||d[k-1]; h+=`<g class="node${d[k]?' done':open?' open':''}" data-k="${k}" tabindex="0" role="button" aria-label="Fase ${k+1}: ${p.n}"><circle class="ring" cx="${NX[k]}" cy="${y}" r="38"/><text class="num" x="${NX[k]}" y="${y-4}" text-anchor="middle">${k+1}</text><path class="lock" d="M${NX[k]-7} ${y+6} h14 v12 h-14z M${NX[k]-4} ${y+6} v-4 a4 4 0 0 1 8 0 v4" fill="none" stroke="#9AABC4" stroke-width="2"/>${d[k]?`<path d="M${NX[k]-9} ${y+10} l6 6 l12 -12" fill="none" stroke="#1C5FC6" stroke-width="3" stroke-linecap="round"/>`:''}<text x="${NX[k]}" y="${y+(k%2?64:-54)}" text-anchor="middle">${p.n}</text></g>`; });
   svg.innerHTML=h;
-  $$('.node',svg).forEach(n=>{ const g=()=>{ const k=+n.dataset.k; if(k===0||d[k-1]) goId('p'+s+'-'+k); else noSnd(); }; n.addEventListener('click',g); n.addEventListener('keydown',e=>{ if(e.key==='Enter') g(); }); });
+  $$('.node',svg).forEach(nd=>{ const g=()=>{ const k=+nd.dataset.k; if(k===0||d[k-1]) goId(`p${s}${t}-${k}`); else noSnd(); }; nd.addEventListener('click',g); nd.addEventListener('keydown',e=>{ if(e.key==='Enter') g(); }); });
 }
 
-/* Reloj y tiempos */
+/* Reloj */
 let t0=null, tick=null, elapsed=0;
-const fmt=t=>String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+const fmt=x=>String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');
 function startClock(){ clearInterval(tick); t0=Date.now(); elapsed=0; $('#clock').textContent='00:00'; tick=setInterval(()=>{ elapsed=Math.floor((Date.now()-t0)/1000); $('#clock').textContent=fmt(elapsed); },1000); }
-function finish(s){ clearInterval(tick); results[s].push(['Equipo '+state.team,elapsed]); results[s].sort((a,b)=>a[1]-b[1]); $('#e'+s+' [data-board]').innerHTML=results[s].map((r,i)=>`<div><b>${i+1}</b><span>${r[0]}</span><span>${fmt(r[1])}</span></div>`).join(''); }
+function finish(key){ clearInterval(tick); results[key].push(['Equipo '+state.team,elapsed]); results[key].sort((a,b)=>a[1]-b[1]); const [s,t]=key.split('-'); $(`#e${s}${t} [data-board]`).innerHTML=results[key].map((r,i)=>`<div><b>${i+1}</b><span>${r[0]}</span><span>${fmt(r[1])}</span></div>`).join(''); }
 
 /* Inicio */
 $('#teamPick').innerHTML=[1,2,3,4].map(n=>`<button type="button" aria-pressed="false" data-t="${n}">Equipo ${n}</button>`).join('');
-$$('.sala-card').forEach(c=>c.addEventListener('click',()=>{ $$('.sala-card').forEach(x=>x.setAttribute('aria-pressed',String(x===c))); state.selSala=+c.dataset.sala; tone(900,.06,'triangle',.08); }));
+$('#sitPick').innerHTML=[1,2].map(n=>`<button type="button" aria-pressed="false" data-s="${n}">Situación ${n}</button>`).join('');
+function sitLabels(){ const s=state.selSala; $$('#sitPick button').forEach(b=>{ const n=+b.dataset.s; b.innerHTML=`Situación ${n}`+(s?`<small>${M[s].sits[n].who}</small>`:''); }); }
+$$('.sala-card').forEach(c=>c.addEventListener('click',()=>{ $$('.sala-card').forEach(x=>x.setAttribute('aria-pressed',String(x===c))); state.selSala=+c.dataset.sala; sitLabels(); tone(900,.06,'triangle',.08); }));
+$$('#sitPick button').forEach(b=>b.addEventListener('click',()=>{ $$('#sitPick button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); state.selSit=+b.dataset.s; tone(900,.06,'triangle',.08); }));
 $$('#teamPick button').forEach(b=>b.addEventListener('click',()=>{ $$('#teamPick button').forEach(x=>x.setAttribute('aria-pressed',String(x===b))); state.selTeam=+b.dataset.t; tone(900,.06,'triangle',.08); }));
 $('#goBtn').addEventListener('click',()=>{
-  if(!state.selSala||!state.selTeam){ $('#iniMsg').className='msg no'; $('#iniMsg').textContent='Elijan sala y equipo.'; noSnd(); return; }
+  if(!state.selSala||!state.selSit||!state.selTeam){ $('#iniMsg').className='msg no'; $('#iniMsg').textContent='Elijan sala, situación y equipo.'; noSnd(); return; }
   $('#iniMsg').textContent='';
-  state.sala=state.selSala; state.team=state.selTeam; resetSala(state.sala);
-  const w=$('#where'); w.hidden=false; w.textContent='SALA '+state.sala+' · EQUIPO '+state.team;
-  ac(); okSnd(); startClock(); refreshList(); goId('b'+state.sala);
+  state.sala=state.selSala; state.sit=state.selSit; state.team=state.selTeam; const key=state.sala+'-'+state.sit; resetKey(key);
+  const w=$('#where'); w.hidden=false; w.textContent=`SALA ${state.sala} · SITUACIÓN ${state.sit} · EQUIPO ${state.team}`;
+  ac(); okSnd(); startClock(); refreshList(); goId('b'+state.sala+state.sit);
 });
 $('#homeBtn').addEventListener('click',()=>goId('s-ini'));
 $('#refBtn').addEventListener('click',()=>goId('s-refs'));
+$('#sndBtn').addEventListener('click',()=>{ soundOn=!soundOn; $('#sndBtn').setAttribute('aria-pressed',String(soundOn)); $('#sndBtn').classList.toggle('off',!soundOn); ac(); });
+
+
+function calcEval(src){ let i=0; const peek=()=>src[i], eat=c=>{ if(src[i]===c){ i++; return true; } return false; };
+  function num(){ let st=i; while(i<src.length&&/[0-9.]/.test(src[i])) i++; if(st===i) throw 0; return parseFloat(src.slice(st,i)); }
+  function fac(){ if(eat('-')) return -fac(); if(eat('(')){ const v=exp(); if(!eat(')')) throw 0; return v; } return num(); }
+  function term(){ let v=fac(); for(;;){ if(eat('*')) v*=fac(); else if(eat('/')) v/=fac(); else return v; } }
+  function exp(){ let v=term(); for(;;){ if(eat('+')) v+=term(); else if(eat('-')) v-=term(); else return v; } }
+  src=src.replace(/\s/g,''); const v=exp(); if(i!==src.length) throw 0; return v; }
+/* Calculadora */
+(function(){
+  const pad=$('#calc'), disp=$('#cDisp'); let expr='';
+  const keys=['7','8','9','÷','4','5','6','×','1','2','3','−','0',',','(',')','C','⌫','+','='];
+  $('#cKeys').innerHTML=keys.map(k=>`<button type="button" data-c="${k}" class="${'÷×−+='.includes(k)?'op':''}${k==='='?' eq':''}">${k}</button>`).join('');
+  const show=()=>disp.textContent=expr||'0';
+  $$('#cKeys button').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.c;
+    if(k==='C') expr=''; else if(k==='⌫') expr=expr.slice(0,-1);
+    else if(k==='='){ const js=expr.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').replace(/,/g,'.'); try{ const r=calcEval(js); expr=Number.isFinite(r)?String(Math.round(r*1000)/1000).replace('.',','):'Error'; }catch(e){ expr='Error'; } }
+    else { if(expr==='Error') expr=''; expr+=k; }
+    show(); tone(1000,.03,'square',.03); }));
+  $('#calcBtn').addEventListener('click',()=>{ pad.hidden=!pad.hidden; });
+  $('#cClose').addEventListener('click',()=>pad.hidden=true);
+  show();
+})();
 
 /* Texto del caso */
 let txT=null;
-function typeTx(el,text){ clearInterval(txT); let k=0; if(reduce){ el.textContent=text; return; } el.innerHTML=''; txT=setInterval(()=>{ k++; el.textContent=text.slice(0,k); const c=document.createElement('span'); c.className='cur'; el.appendChild(c); if(k>=text.length) clearInterval(txT); },26); }
+function typeTx(el,text){ clearInterval(txT); let k=0; if(reduce){ el.textContent=text; return; } el.innerHTML=''; txT=setInterval(()=>{ k++; el.textContent=text.slice(0,k); const c=document.createElement('span'); c.className='cur'; el.appendChild(c); if(k>=text.length) clearInterval(txT); },22); }
 
 /* Navegación */
 let list=[], cur=0;
-function fit(){ const sl=list[cur]; if(!sl) return; const inn=sl.querySelector(':scope > .in, :scope > .cv'); if(!inn) return; inn.style.zoom=1; const cs=getComputedStyle(sl); const avH=sl.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom); const avW=sl.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight); const z=Math.min(1,avH/inn.scrollHeight,avW/inn.scrollWidth); if(z<1) inn.style.zoom=Math.max(.5,z-0.01); }
+function fit(){ const sl=list[cur]; if(!sl) return; const inn=sl.querySelector(':scope > .in, :scope > .cv'); if(!inn) return; inn.style.zoom=1; const cs=getComputedStyle(sl); const avH=sl.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom); const avW=sl.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight); const z=Math.min(1,avH/inn.scrollHeight,avW/inn.scrollWidth); if(z<1) inn.style.zoom=Math.max(.5,z-0.01); if(sl._live) sl._live.size(); }
 window.addEventListener('resize',fit);
 document.addEventListener('click',()=>setTimeout(fit,60));
-$$('img').forEach(im=>im.addEventListener('load',()=>fit()));
-
-function refreshList(){ list=$$('.slide').filter(sl=>!sl.dataset.s||+sl.dataset.s===state.sala); }
+function refreshList(){ const key=state.sala?state.sala+'-'+state.sit:null; list=$$('.slide').filter(sl=>!sl.dataset.k||sl.dataset.k===key); }
 function go(n){
   n=Math.max(0,Math.min(list.length-1,n)); const sl=list[n], prev=list[cur]; cur=n;
   $$('.slide').forEach(x=>x.classList.toggle('on',x===sl));
   document.body.classList.toggle('on-cover',sl.id==='s-cover'); document.body.classList.toggle('on-ini',sl.id==='s-ini');
   $('#bar').style.width=((n+1)/list.length*100)+'%'; $('#cnt').textContent=(n+1)+' / '+list.length;
-  $('#prev').disabled=n===0; $('#next').disabled=n===list.length-1; sl.scrollTop=0;
-  if(sl.id.startsWith('b')&&sl!==prev){ const s=+sl.dataset.s; typeTx($('[data-tx]',sl),M[s].tx); }
+  $('#prev').disabled=n===0; $('#next').disabled=n===list.length-1;
+  if(/^b\d\d$/.test(sl.id)&&sl!==prev){ const [s,t]=sl.dataset.k.split('-'); typeTx($('[data-tx]',sl),M[s].sits[t].tx); }
   try{ history.replaceState(null,'','#'+sl.id); }catch(e){}
-  requestAnimationFrame(fit); setTimeout(fit,300);
+  requestAnimationFrame(()=>{ fit(); if(sl._live) sl._live.start(); }); setTimeout(fit,300);
 }
 function goId(id){ const i=list.findIndex(x=>x.id===id); if(i>=0) go(i); }
 $('#prev').addEventListener('click',()=>go(cur-1)); $('#next').addEventListener('click',()=>go(cur+1));
-document.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; if(e.key==='ArrowRight'||e.key==='PageDown'){ e.preventDefault(); go(cur+1); } if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); } });
+document.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT') return; if(e.key==='ArrowRight'||e.key==='PageDown'){ e.preventDefault(); go(cur+1); } if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); } if(e.key==='Escape') $('#lb').hidden=true; });
 $('#fs').addEventListener('click',()=>{ const d=document.documentElement; if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); else if(d.requestFullscreen) d.requestFullscreen().catch(()=>{}); });
-
 document.addEventListener('click',e=>{ const im=e.target.closest('.holo img,.photo img'); if(im){ const lb=$('#lb'); $('img',lb).src=im.src; $('img',lb).alt=im.alt; lb.hidden=false; return; } if(e.target.closest('#lb')) $('#lb').hidden=true; });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') $('#lb').hidden=true; });
-wireAll(); drawMap(1); drawMap(2); refreshList(); go(0);
+$$('img').forEach(im=>im.addEventListener('load',()=>fit()));
+wireAll(); for(const k of Object.keys(done)) drawMap(k); refreshList(); go(0);
 window.__test={state,goId,M,refreshList};
 </script>
 </body>
